@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { motion, useReducedMotion } from 'motion/react';
+import Lenis from 'lenis';
 import BeforeAfterSlider, { ComparisonBoard } from './components/BeforeAfterSlider.jsx';
 import { cases } from './data/cases.js';
 import {
@@ -352,7 +353,12 @@ function Procedures() {
 
 function ResultGallery() {
   const [filter, setFilter] = useState('Todos');
-  const filters = ['Todos', 'Preenchimento labial', 'Harmonização facial'];
+  const filters = [
+    'Todos',
+    'Preenchimento labial',
+    'Harmonização facial',
+    'Rinomodelação',
+  ];
   const visibleCases =
     filter === 'Todos' ? cases : cases.filter((item) => item.procedimento === filter);
 
@@ -606,6 +612,16 @@ function FloatingWhatsApp() {
 }
 
 export default function App() {
+  useEffect(() => {
+    const lenis = new Lenis({
+      autoRaf: true,
+      anchors: true,
+      respectReducedMotion: true,
+    });
+
+    return () => lenis.destroy();
+  }, []);
+
   const structuredData = {
     '@context': 'https://schema.org',
     '@type': 'HealthAndBeautyBusiness',

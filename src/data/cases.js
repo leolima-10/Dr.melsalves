@@ -24,4 +24,20 @@ export const cases = [
     alt: 'Prancha original com imagens de antes e depois de um rosto.',
     legenda: 'Composição original apresentada sem controle deslizante.',
   },
+  {
+    id: 'caso-07',
+    titulo: 'Rinomodelação',
+    procedimento: 'Rinomodelação',
+    antes: '/img/resultados/caso-07-antes.jpg',
+    depois: '/img/resultados/caso-07-depois.jpg',
+    alt: 'Comparação antes e depois do nariz em vista inferior.',
+  },
+  {
+    id: 'caso-08',
+    titulo: 'Rinomodelação de perfil',
+    procedimento: 'Rinomodelação',
+    antes: '/img/resultados/caso-08-depois.jpg',
+    depois: '/img/resultados/caso-08-antes.jpg',
+    alt: 'Comparação antes e depois do nariz em vista de perfil.',
+  },
 ];
