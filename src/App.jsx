@@ -1,5 +1,7 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { motion, useReducedMotion } from 'motion/react';
+import gsap from 'gsap';
+import { useGSAP } from '@gsap/react';
 import Lenis from 'lenis';
 import BeforeAfterSlider, { ComparisonBoard } from './components/BeforeAfterSlider.jsx';
 import { cases } from './data/cases.js';
@@ -9,6 +11,8 @@ import {
   SHOW_TESTIMONIALS,
   WHATSAPP_PHONE,
 } from './config.js';
+
+gsap.registerPlugin(useGSAP);
 
 const navItems = [
   { href: '#sobre', label: 'Sobre' },
@@ -226,16 +230,51 @@ function Header() {
 
 function Hero() {
   const shouldReduceMotion = useReducedMotion();
+  const heroRef = useRef(null);
+
+  useGSAP(
+    () => {
+      if (shouldReduceMotion) return;
+
+      const markPath = heroRef.current?.querySelector('.hero__mini-mark path');
+      const timeline = gsap.timeline({
+        defaults: { ease: 'power3.out' },
+      });
+
+      timeline
+        .from('.hero__copy > *', {
+          autoAlpha: 0,
+          y: 16,
+          duration: 0.6,
+          stagger: 0.08,
+        })
+        .from(
+          '.hero__portrait-wrap',
+          { autoAlpha: 0, y: 12, duration: 0.75 },
+          '-=0.42',
+        )
+        .from(
+          '.hero__credentials span',
+          { autoAlpha: 0, y: 8, duration: 0.4, stagger: 0.07 },
+          '-=0.3',
+        );
+
+      if (markPath) {
+        const pathLength = markPath.getTotalLength();
+        gsap.set(markPath, {
+          strokeDasharray: pathLength,
+          strokeDashoffset: pathLength,
+        });
+        timeline.to(markPath, { strokeDashoffset: 0, duration: 0.9 }, 0.65);
+      }
+    },
+    { scope: heroRef, dependencies: [shouldReduceMotion], revertOnUpdate: true },
+  );
 
   return (
-    <section className="hero" id="inicio" aria-labelledby="hero-title">
+    <section ref={heroRef} className="hero" id="inicio" aria-labelledby="hero-title">
       <div className="hero__inner page-width">
-        <motion.div
-          className="hero__copy"
-          initial={shouldReduceMotion ? false : { opacity: 0, y: 14 }}
-          animate={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-        >
+        <div className="hero__copy">
           <p className="hero__welcome">Harmonização facial & estética avançada</p>
           <h1 id="hero-title">Harmonização facial com naturalidade e equilíbrio.</h1>
           <p className="hero__description">
@@ -251,13 +290,8 @@ function Hero() {
               <span aria-hidden="true">↘</span>
             </a>
           </div>
-        </motion.div>
-        <motion.div
-          className="hero__portrait-wrap"
-          initial={shouldReduceMotion ? false : { opacity: 0, y: 10 }}
-          animate={shouldReduceMotion ? undefined : { opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.12, ease: [0.22, 1, 0.36, 1] }}
-        >
+        </div>
+        <div className="hero__portrait-wrap">
           <div className="hero__portrait-frame">
             <img
               className="hero__portrait"
@@ -271,18 +305,15 @@ function Hero() {
             <HoneycombMark className="hero__mini-mark" />
             <span>Dra. Mel<br />Salves</span>
           </div>
-        </motion.div>
-        <motion.div
+        </div>
+        <div
           className="hero__credentials"
           aria-label="Atuação profissional"
-          initial={shouldReduceMotion ? false : { opacity: 0 }}
-          animate={shouldReduceMotion ? undefined : { opacity: 1 }}
-          transition={{ duration: 0.65, delay: 0.22 }}
         >
           <span>Especialista em Harmonização Facial</span>
           <span>Expert em Preenchimento Labial</span>
           <span>Professora na Rede Pro Cursos</span>
-        </motion.div>
+        </div>
       </div>
       <span className="hero__ornament" aria-hidden="true" />
     </section>
