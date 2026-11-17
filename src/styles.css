@@ -1697,7 +1697,6 @@ img {
   margin: 0;
   font-family: var(--font-display);
   font-size: clamp(3rem, 6.4vw, 5.4rem);
-  font-style: italic;
   font-weight: 500;
   letter-spacing: -0.025em;
   line-height: 0.98;

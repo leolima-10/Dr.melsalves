@@ -72,12 +72,12 @@ export const REDE_PRO_CURSOS = {
 };
 
 // --- Locais de atendimento --------------------------------------------
-// address, hours e mapUrl são opcionais: vazios = ocultos.
+// address, hours e mapUrl são opcionais: vazios = ocultos. schemaType (JSON-LD): 'City' (padrão) ou 'Place'.
 export const SERVICE_AREAS = [
   { slug: 'lauro-de-freitas', name: 'Lauro de Freitas', address: '', hours: '', mapUrl: '' },
   { slug: 'salvador', name: 'Salvador', address: '', hours: '', mapUrl: '' },
-  { slug: 'praia-do-forte', name: 'Praia do Forte', address: '', hours: '', mapUrl: '' },
-  { slug: 'barra-do-pojuca', name: 'Barra do Pojuca', address: '', hours: '', mapUrl: '' },
+  { slug: 'praia-do-forte', name: 'Praia do Forte', schemaType: 'Place', address: '', hours: '', mapUrl: '' },
+  { slug: 'barra-do-pojuca', name: 'Barra do Pojuca', schemaType: 'Place', address: '', hours: '', mapUrl: '' },
 ];
 export const REGION = 'BA';
 

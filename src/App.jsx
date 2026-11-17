@@ -28,8 +28,6 @@ import {
   SHORT_NAME,
   SHOW_CREDENTIALS,
   SHOW_IDENTITY_PORTRAITS,
-  SITE_URL,
-  WHATSAPP_PHONE,
 } from './config/site.js';
 
 gsap.registerPlugin(useGSAP);
@@ -552,18 +550,8 @@ export default function App() {
     return () => lenis.destroy();
   }, []);
 
-  const structuredData = {
-    '@context': 'https://schema.org',
-    '@type': 'HealthAndBeautyBusiness',
-    name: DISPLAY_NAME,
-    url: SITE_URL,
-    telephone: `+${WHATSAPP_PHONE}`,
-    sameAs: [INSTAGRAM.url],
-  };
-
   return (
     <>
-      <script type="application/ld+json">{JSON.stringify(structuredData)}</script>
       <Header />
       <main id="conteudo">
         <Hero />
