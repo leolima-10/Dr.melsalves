@@ -1,6 +1,17 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Lenis from 'lenis';
 import BeforeAfterSlider, { ComparisonBoard } from './components/BeforeAfterSlider.jsx';
+import Favo from './components/Favo.jsx';
+import BeeFlight from './components/BeeFlight.jsx';
+import {
+  DESKTOP_MOTION,
+  FINE_POINTER,
+  Flip,
+  gsap,
+  MOTION_OK,
+  ScrollTrigger,
+  useIsoLayoutEffect,
+} from './lib/gsap.js';
 import {
   BrandLogo,
   InstagramIcon,
@@ -112,13 +123,51 @@ function Header() {
     return () => window.removeEventListener('keydown', closeOnEscape);
   }, [menuOpen]);
 
+  // Cabeçalho inteligente: some ao rolar para baixo e volta ao rolar para cima. Fica visível
+  // com o menu aberto ou quando o foco do teclado entra nele.
+  const headerRef = useRef(null);
+  const menuOpenRef = useRef(false);
+
+  useEffect(() => {
+    menuOpenRef.current = menuOpen;
+  }, [menuOpen]);
+
+  useEffect(() => {
+    const header = headerRef.current;
+    if (!header) return undefined;
+    const mm = gsap.matchMedia();
+    mm.add(MOTION_OK, () => {
+      const setHidden = gsap.quickTo(header, 'yPercent', { duration: 0.35, ease: 'power2.out' });
+      const trigger = ScrollTrigger.create({
+        start: 0,
+        end: 'max',
+        onUpdate: (self) => {
+          if (menuOpenRef.current) return;
+          if (self.direction === 1 && self.scroll() > 240) setHidden(-100);
+          else if (self.direction === -1) setHidden(0);
+        },
+      });
+      const showOnFocus = () => setHidden(0);
+      header.addEventListener('focusin', showOnFocus);
+      return () => {
+        trigger.kill();
+        header.removeEventListener('focusin', showOnFocus);
+        gsap.set(header, { clearProps: 'transform' });
+      };
+    });
+    return () => mm.revert();
+  }, []);
+
   const closeMenu = () => setMenuOpen(false);
 
   return (
-    <header className={`site-header${scrolled || menuOpen ? ' site-header--scrolled' : ''}`}>
+    <header
+      ref={headerRef}
+      className={`site-header${scrolled || menuOpen ? ' site-header--scrolled' : ''}`}
+    >
       <div className="site-header__inner">
         <a className="brand" href="#inicio" onClick={closeMenu}>
-          <BrandLogo />
+          <BrandLogo animate />
           <span className="sr-only">, início</span>
         </a>
         <button
@@ -227,7 +276,8 @@ const aboutFacts = [
 // Rede Pro Cursos, que antes eram quatro seções repetindo a mesma mensagem.
 function About() {
   return (
-    <SectionReveal className="section about-section" id="sobre" aria-labelledby="about-title">
+    <SectionReveal className="section about-section favo-host" id="sobre" aria-labelledby="about-title">
+      <Favo side="left" anchor="mid" seed={2} accents={3} />
       <div className="page-width about-layout">
         <div className="about-intro">
           <p className="section-kicker">Sobre a {SHORT_NAME}</p>
@@ -289,18 +339,56 @@ function ResultGallery() {
       ? publishedCases
       : publishedCases.filter((item) => item.procedimento === filter);
 
-  if (publishedCases.length === 0) return null;
+  const gridRef = useRef(null);
+  const flipState = useRef(null);
 
+  // Filtro: guarda a posição dos cards, o React troca a lista e o Flip anima do estado
+  // antigo para o novo (cards que ficam deslizam; os novos aparecem com fade).
   const changeFilter = (nextFilter) => {
-    if (document.startViewTransition) {
-      document.startViewTransition(() => setFilter(nextFilter));
-    } else {
-      setFilter(nextFilter);
+    if (nextFilter === filter) return;
+    if (gridRef.current && window.matchMedia(MOTION_OK).matches) {
+      flipState.current = Flip.getState(gridRef.current.querySelectorAll('.result-card'));
     }
+    setFilter(nextFilter);
   };
 
+  useIsoLayoutEffect(() => {
+    const state = flipState.current;
+    const grid = gridRef.current;
+    if (!state || !grid) return;
+    flipState.current = null;
+    Flip.from(state, {
+      targets: grid.querySelectorAll('.result-card'),
+      duration: 0.6,
+      ease: 'power2.inOut',
+      onEnter: (entering) =>
+        gsap.fromTo(entering, { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.5, delay: 0.15, clearProps: 'all' }),
+    });
+  }, [filter]);
+
+  // Entrada da galeria: a foto de cada card é "descoberta" de cima para baixo ao entrar na tela.
+  useIsoLayoutEffect(() => {
+    const grid = gridRef.current;
+    if (!grid) return undefined;
+    const mm = gsap.matchMedia();
+    mm.add(MOTION_OK, () => {
+      gsap.from(grid.querySelectorAll('.compare-slider, .comparison-board'), {
+        clipPath: 'inset(0% 0% 100% 0%)',
+        duration: 1,
+        ease: 'power3.inOut',
+        stagger: 0.12,
+        clearProps: 'clipPath',
+        scrollTrigger: { trigger: grid, start: 'top 80%', once: true },
+      });
+    });
+    return () => mm.revert();
+  }, []);
+
+  if (publishedCases.length === 0) return null;
+
   return (
-    <SectionReveal className="section results-section" id="resultados" aria-labelledby="results-title">
+    <SectionReveal className="section results-section favo-host" id="resultados" aria-labelledby="results-title">
+      <Favo side="right" anchor="mid" seed={1} accents={1} />
       <div className="page-width">
         <div className="results-heading">
           <div className="section-heading">
@@ -324,9 +412,9 @@ function ResultGallery() {
             ))}
           </div>
         </div>
-        <div className="results-grid" aria-live="polite">
+        <div className="results-grid" ref={gridRef} aria-live="polite">
           {visibleCases.map((item) => (
-            <article className="result-card" key={item.id} style={{ viewTransitionName: item.id }}>
+            <article className="result-card" key={item.id} data-flip-id={item.id}>
               {item.formato === 'prancha' ? (
                 <ComparisonBoard item={item} />
               ) : (
@@ -356,12 +444,56 @@ function ResultGallery() {
 }
 
 function CarePath() {
+  const stepsRef = useRef(null);
+
+  // Linha de progresso: conforme a pessoa rola, a linha dourada de cada passo se preenche e o
+  // texto "acende" (de 40% para 100%). Desktop: os 4 passos em sequência, num só scrub.
+  // Mobile (passos empilhados): cada passo acende quando chega ao meio da tela.
+  useIsoLayoutEffect(() => {
+    const list = stepsRef.current;
+    if (!list) return undefined;
+    const steps = gsap.utils.toArray('.care-step', list);
+    const parts = (step) => step.querySelectorAll('.care-step__number, h4, p');
+    const mm = gsap.matchMedia();
+
+    mm.add(DESKTOP_MOTION, () => {
+      gsap.set(steps.flatMap((step) => [...parts(step)]), { opacity: 0.4 });
+      const timeline = gsap.timeline({
+        defaults: { ease: 'none' },
+        scrollTrigger: { trigger: list, start: 'top 80%', end: 'top 35%', scrub: 0.6 },
+      });
+      steps.forEach((step, index) => {
+        timeline
+          .fromTo(step.querySelector('.care-step__line'), { scaleX: 0 }, { scaleX: 1, duration: 1 }, index)
+          .to(parts(step), { opacity: 1, duration: 0.6 }, index + 0.2);
+      });
+    });
+
+    mm.add(`${MOTION_OK} and (max-width: 860px)`, () => {
+      steps.forEach((step) => {
+        gsap.set(parts(step), { opacity: 0.4 });
+        gsap
+          .timeline({
+            defaults: { ease: 'none' },
+            scrollTrigger: { trigger: step, start: 'top 85%', end: 'top 55%', scrub: true },
+          })
+          .fromTo(step.querySelector('.care-step__line'), { scaleX: 0 }, { scaleX: 1 })
+          .to(parts(step), { opacity: 1 }, 0);
+      });
+    });
+
+    return () => mm.revert();
+  }, []);
+
   return (
     <SectionReveal
-      className="section care-section"
+      curtain
+      className="section care-section favo-host"
       id="atendimento"
       aria-labelledby="care-title"
     >
+      <Favo side="left" anchor="bottom" variant="dark" seed={3} accents={1} />
+      <Favo side="right" anchor="top" variant="dark" seed={4} accents={1} />
       <div className="page-width">
         <div className="care-top">
           <div className="section-heading">
@@ -374,9 +506,10 @@ function CarePath() {
           <AreaCards />
         </div>
         <h3 className="care-steps-title">Como funciona o atendimento</h3>
-        <ol className="care-steps">
+        <ol className="care-steps" ref={stepsRef}>
           {steps.map((step, index) => (
             <li className="care-step" key={step.title}>
+              <span className="care-step__line" aria-hidden="true" />
               <span className="care-step__number">{String(index + 1).padStart(2, '0')}</span>
               <h4>{step.title}</h4>
               <p>{step.text}</p>
@@ -388,9 +521,43 @@ function CarePath() {
   );
 }
 
+// Abre e fecha o <details> animando a altura do corpo (GSAP). Com reduced motion mantém o
+// comportamento nativo (sem preventDefault). O ícone usa data-closing para girar já no início.
+function toggleFaq(event) {
+  if (!window.matchMedia(MOTION_OK).matches) return;
+  event.preventDefault();
+  const details = event.currentTarget.parentElement;
+  const body = details.querySelector('.faq-item__body');
+  gsap.killTweensOf(body);
+
+  if (details.open && !details.hasAttribute('data-closing')) {
+    details.setAttribute('data-closing', '');
+    gsap.to(body, {
+      height: 0,
+      opacity: 0,
+      duration: 0.35,
+      ease: 'power2.inOut',
+      onComplete: () => {
+        details.open = false;
+        details.removeAttribute('data-closing');
+        gsap.set(body, { clearProps: 'height,opacity' });
+      },
+    });
+  } else {
+    details.removeAttribute('data-closing');
+    details.open = true;
+    gsap.fromTo(
+      body,
+      { height: 0, opacity: 0 },
+      { height: 'auto', opacity: 1, duration: 0.45, ease: 'power2.out', clearProps: 'height,opacity' },
+    );
+  }
+}
+
 function FAQ() {
   return (
-    <SectionReveal className="section faq-section" id="faq" aria-labelledby="faq-title">
+    <SectionReveal className="section faq-section favo-host" id="faq" aria-labelledby="faq-title">
+      <Favo side="right" anchor="mid" seed={5} accents={3} />
       <div className="page-width faq-layout">
         <div className="section-heading">
           <h2 id="faq-title">Perguntas frequentes</h2>
@@ -399,8 +566,10 @@ function FAQ() {
         <div className="faq-list">
           {faqs.map((item) => (
             <details className="faq-item" key={item.question}>
-              <summary>{item.question}<span aria-hidden="true" /></summary>
-              <p>{item.answer}</p>
+              <summary onClick={toggleFaq}>{item.question}<span aria-hidden="true" /></summary>
+              <div className="faq-item__body">
+                <p>{item.answer}</p>
+              </div>
             </details>
           ))}
         </div>
@@ -411,7 +580,8 @@ function FAQ() {
 
 function Contact() {
   return (
-    <SectionReveal className="section contact-section" id="contato" aria-labelledby="contact-title">
+    <SectionReveal className="section contact-section favo-host" id="contato" aria-labelledby="contact-title">
+      <Favo side="left" anchor="bottom" seed={6} accents={2} />
       <div className="page-width contact-panel">
         <div className="contact-panel__copy">
           <p className="section-kicker">Vamos conversar?</p>
@@ -491,6 +661,29 @@ function FloatingWhatsApp() {
     return () => observer.disconnect();
   }, []);
 
+  // Pulso discreto no ícone a cada poucos segundos para lembrar do botão sem distrair.
+  useEffect(() => {
+    const icon = document.querySelector('.floating-whatsapp svg');
+    if (!icon) return undefined;
+    const mm = gsap.matchMedia();
+    mm.add(MOTION_OK, () => {
+      gsap.to(icon, {
+        scale: 1.18,
+        duration: 0.45,
+        ease: 'power2.out',
+        yoyo: true,
+        repeat: 1,
+        repeatDelay: 0,
+        delay: 4,
+        repeatRefresh: false,
+        onComplete: function replay() {
+          this.delay(7).restart(true);
+        },
+      });
+    });
+    return () => mm.revert();
+  }, []);
+
   return (
     <WhatsAppLink
       context="floating"
@@ -505,13 +698,48 @@ function FloatingWhatsApp() {
 
 export default function App() {
   useEffect(() => {
+    // Lenis e ScrollTrigger no mesmo relógio: o GSAP conduz o rAF do Lenis.
     const lenis = new Lenis({
-      autoRaf: true,
+      autoRaf: false,
       anchors: true,
       respectReducedMotion: true,
     });
+    lenis.on('scroll', ScrollTrigger.update);
+    const tick = (time) => lenis.raf(time * 1000);
+    gsap.ticker.add(tick);
+    gsap.ticker.lagSmoothing(0);
 
-    return () => lenis.destroy();
+    return () => {
+      gsap.ticker.remove(tick);
+      lenis.destroy();
+    };
+  }, []);
+
+  // Botões dourados "magnéticos": seguem o ponteiro de leve (até ~6 px) e voltam com elástico.
+  // Só com mouse (hover + ponteiro fino); no toque não existe.
+  useEffect(() => {
+    const mm = gsap.matchMedia();
+    mm.add(FINE_POINTER, () => {
+      const cleanups = gsap.utils.toArray('.button--gold').map((button) => {
+        const moveX = gsap.quickTo(button, 'x', { duration: 0.4, ease: 'power3.out' });
+        const moveY = gsap.quickTo(button, 'y', { duration: 0.4, ease: 'power3.out' });
+        const onMove = (event) => {
+          const rect = button.getBoundingClientRect();
+          moveX(((event.clientX - rect.left) / rect.width - 0.5) * 12);
+          moveY(((event.clientY - rect.top) / rect.height - 0.5) * 8);
+        };
+        const onLeave = () => gsap.to(button, { x: 0, y: 0, duration: 0.7, ease: 'elastic.out(1, 0.4)' });
+        button.addEventListener('pointermove', onMove);
+        button.addEventListener('pointerleave', onLeave);
+        return () => {
+          button.removeEventListener('pointermove', onMove);
+          button.removeEventListener('pointerleave', onLeave);
+          gsap.set(button, { clearProps: 'x,y' });
+        };
+      });
+      return () => cleanups.forEach((cleanup) => cleanup());
+    });
+    return () => mm.revert();
   }, []);
 
   return (
@@ -528,6 +756,7 @@ export default function App() {
         <Contact />
       </main>
       <Footer />
+      <BeeFlight />
       <FloatingWhatsApp />
     </>
   );

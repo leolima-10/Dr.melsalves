@@ -1,5 +1,5 @@
-import { useId } from 'react';
-import { motion, useReducedMotion } from 'motion/react';
+import { useId, useRef } from 'react';
+import { DESKTOP_MOTION, gsap, MOTION_OK, SplitText, useIsoLayoutEffect } from '../lib/gsap.js';
 import { DISPLAY_NAME, PROFESSIONAL, getWhatsAppLink } from '../config/site.js';
 import { trackWhatsAppClick } from '../lib/analytics.js';
 
@@ -7,10 +7,30 @@ import { trackWhatsAppClick } from '../lib/analytics.js';
 // ao lado de "Mel *Salves*". As asas passam por trás do corpo (a máscara recorta o corpo),
 // então o desenho funciona sobre qualquer fundo. O nome completo fica em texto para
 // leitores de tela; o desenho é decorativo.
-export function BrandLogo({ className = '' }) {
+export function BrandLogo({ className = '', animate = false }) {
   const maskId = `bee-wings-${useId().replace(/:/g, '')}`;
+  const ref = useRef(null);
+
+  // `animate`: a abelha se desenha traço a traço (DrawSVG) e o nome surge ao lado, uma vez,
+  // quando a página carrega. O HTML pré-renderizado já traz o logo completo.
+  useIsoLayoutEffect(() => {
+    const logo = ref.current;
+    if (!animate || !logo) return undefined;
+    const mm = gsap.matchMedia();
+    mm.add(MOTION_OK, () => {
+      const strokes = logo.querySelectorAll(
+        '.brand-logo__bee > g > ellipse, .brand-logo__bee > ellipse, .brand-logo__bee > circle, .brand-logo__bee > path',
+      );
+      const timeline = gsap.timeline({ delay: 0.15 });
+      timeline
+        .from(strokes, { drawSVG: '0%', duration: 1.1, ease: 'power2.inOut', stagger: 0.09 })
+        .from(logo.querySelector('.brand-logo__name'), { opacity: 0, x: -8, duration: 0.7, ease: 'power3.out' }, 0.5);
+    });
+    return () => mm.revert();
+  }, [animate]);
+
   return (
-    <span className={`brand-logo ${className}`.trim()}>
+    <span ref={ref} className={`brand-logo ${className}`.trim()}>
       <svg
         className="brand-logo__bee"
         viewBox="22 18 76 88"
@@ -87,22 +107,84 @@ export function WhatsAppLink({ context = 'general', service, className = '', chi
   );
 }
 
-export function SectionReveal({ className, children, ...props }) {
-  const shouldReduceMotion = useReducedMotion();
+// Revela os blocos da seção em cascata (GSAP + ScrollTrigger). O HTML pré-renderizado e o
+// do cliente são idênticos e visíveis: o estado inicial "escondido" só é aplicado pelo GSAP
+// depois da hidratação, então sem JavaScript ou com reduced motion a seção aparece normal.
+export function SectionReveal({ className, children, curtain = false, ...props }) {
+  const ref = useRef(null);
 
-  // `initial` é sempre o mesmo para o HTML pré-renderizado coincidir com o do cliente
-  // (evita erro de hidratação). Com reduced-motion, a revelação é instantânea (duração 0).
-  // Sem JavaScript, o <noscript> do index.html mantém as seções visíveis.
+  // `curtain`: no desktop a seção escura "abre" como uma cortina (clip-path arredondado que
+  // cresce até a largura total) conforme entra na tela.
+  useIsoLayoutEffect(() => {
+    const section = ref.current;
+    if (!curtain || !section) return undefined;
+    const mm = gsap.matchMedia();
+    mm.add(DESKTOP_MOTION, () => {
+      gsap.fromTo(
+        section,
+        { clipPath: 'inset(0% 5% 0% 5% round 56px)' },
+        {
+          clipPath: 'inset(0% 0% 0% 0% round 0px)',
+          ease: 'none',
+          scrollTrigger: { trigger: section, start: 'top 95%', end: 'top 30%', scrub: true },
+        },
+      );
+    });
+    return () => mm.revert();
+  }, [curtain]);
+
+  useIsoLayoutEffect(() => {
+    const section = ref.current;
+    if (!section) return undefined;
+
+    const mm = gsap.matchMedia();
+    mm.add(MOTION_OK, () => {
+      // Blocos de primeiro nível do conteúdo; se houver só um (layout em grade), desce um nível.
+      const content = section.querySelector(':scope > .page-width');
+      let targets = content ? [...content.children] : [];
+      if (targets.length > 0 && targets.length < 3) {
+        targets = targets.flatMap((node) => (node.children.length > 1 ? [...node.children] : [node]));
+      }
+      if (targets.length === 0) targets = [section];
+
+      gsap.from(targets, {
+        opacity: 0,
+        y: 28,
+        duration: 0.8,
+        ease: 'power3.out',
+        stagger: 0.09,
+        clearProps: 'opacity,transform',
+        scrollTrigger: { trigger: section, start: 'top 82%', once: true },
+      });
+
+      // Títulos: cada linha sobe e aparece em sequência (SplitText). `aria: 'none'` mantém o
+      // texto original do <h2> para leitores de tela (inclusive o que está em aria-hidden).
+      // autoSplit refaz as linhas se a largura ou a fonte mudar, e o mm.revert() desfaz tudo.
+      section.querySelectorAll('h2').forEach((heading) => {
+        SplitText.create(heading, {
+          type: 'lines',
+          aria: 'none',
+          autoSplit: true,
+          onSplit: (split) =>
+            gsap.from(split.lines, {
+              yPercent: 45,
+              opacity: 0,
+              duration: 1,
+              ease: 'power4.out',
+              stagger: 0.12,
+              delay: 0.12,
+              scrollTrigger: { trigger: heading, start: 'top 88%', once: true },
+            }),
+        });
+      });
+    });
+
+    return () => mm.revert();
+  }, []);
+
   return (
-    <motion.section
-      className={className}
-      initial={{ opacity: 0 }}
-      whileInView={{ opacity: 1 }}
-      viewport={{ once: true, amount: 0.16 }}
-      transition={{ duration: shouldReduceMotion ? 0 : 0.55, ease: [0.22, 1, 0.36, 1] }}
-      {...props}
-    >
+    <section ref={ref} className={className} {...props}>
       {children}
-    </motion.section>
+    </section>
   );
 }

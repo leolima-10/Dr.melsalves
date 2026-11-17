@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { gsap, MOTION_OK, ScrollTrigger } from '../lib/gsap.js';
 
 function PlaceholderPhoto({ label }) {
   return (
@@ -44,13 +45,21 @@ export function ComparisonBoard({ item }) {
 export default function BeforeAfterSlider({ item }) {
   const frameRef = useRef(null);
   const animationFrameRef = useRef(0);
-  const timersRef = useRef([]);
-  const animatedRef = useRef(false);
+  const hintRef = useRef(null);
   const draggingRef = useRef(false);
   const [position, setPosition] = useState(50);
   const [dragging, setDragging] = useState(false);
   const [hintVisible, setHintVisible] = useState(true);
   const [imageFailed, setImageFailed] = useState({ before: false, after: false });
+
+  // Interrompe a dica animada e deixa o estado do React igual ao que a pessoa está vendo.
+  const stopHint = () => {
+    const hint = hintRef.current;
+    if (!hint) return;
+    hint.timeline.kill();
+    hintRef.current = null;
+    setPosition(Math.round(hint.proxy.value));
+  };
 
   const updatePosition = (nextPosition) => {
     const boundedPosition = Math.max(0, Math.min(100, nextPosition));
@@ -69,6 +78,7 @@ export default function BeforeAfterSlider({ item }) {
 
   const handlePointerDown = (event) => {
     if (event.button !== undefined && event.button !== 0) return;
+    stopHint();
     draggingRef.current = true;
     setDragging(true);
     setHintVisible(false);
@@ -89,7 +99,10 @@ export default function BeforeAfterSlider({ item }) {
   };
 
   const handleKeyDown = (event) => {
-    let nextPosition = position;
+    stopHint();
+    // O estado do React pode estar defasado se a dica acabou de ser interrompida: lê o valor visível.
+    const visible = parseFloat(frameRef.current?.style.getPropertyValue('--pos') ?? '');
+    let nextPosition = Number.isNaN(visible) ? position : visible;
     const step = event.shiftKey ? 10 : 5;
 
     if (event.key === 'ArrowLeft') nextPosition -= step;
@@ -103,43 +116,45 @@ export default function BeforeAfterSlider({ item }) {
     updatePosition(nextPosition);
   };
 
+  // Dica de uso: ao entrar na tela, o divisor vai e volta uma vez (GSAP), ensinando a arrastar.
+  // Qualquer toque, clique ou tecla interrompe a dica (stopHint) para não brigar com a pessoa.
   useEffect(() => {
     const frame = frameRef.current;
-    if (!frame || !('IntersectionObserver' in window) || animatedRef.current) return undefined;
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return undefined;
+    if (!frame) return undefined;
 
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (!entry.isIntersecting || animatedRef.current) return;
-        animatedRef.current = true;
-        const sequence = [
-          [35, 360],
-          [65, 360],
-          [50, 360],
-        ];
-        let delay = 80;
-        sequence.forEach(([nextPosition, duration]) => {
-          timersRef.current.push(
-            window.setTimeout(() => updatePosition(nextPosition), delay),
-          );
-          delay += duration;
-        });
-        observer.disconnect();
-      },
-      { threshold: 0.6 },
-    );
+    const mm = gsap.matchMedia();
+    mm.add(MOTION_OK, () => {
+      const proxy = { value: 50 };
+      const timeline = gsap.timeline({
+        paused: true,
+        defaults: { duration: 0.55, ease: 'power2.inOut' },
+        onUpdate: () => frame.style.setProperty('--pos', `${proxy.value}%`),
+        onComplete: () => setPosition(50),
+      });
+      timeline
+        .to(proxy, { value: 35 })
+        .to(proxy, { value: 65, duration: 0.8 })
+        .to(proxy, { value: 50 });
+      hintRef.current = { timeline, proxy };
 
-    observer.observe(frame);
-    return () => observer.disconnect();
+      const trigger = ScrollTrigger.create({
+        trigger: frame,
+        start: 'top 70%',
+        once: true,
+        onEnter: () => timeline.play(),
+      });
+
+      return () => {
+        trigger.kill();
+        timeline.kill();
+        hintRef.current = null;
+      };
+    });
+
+    return () => mm.revert();
   }, []);
 
-  useEffect(
-    () => () => {
-      cancelAnimationFrame(animationFrameRef.current);
-      timersRef.current.forEach(window.clearTimeout);
-    },
-    [],
-  );
+  useEffect(() => () => cancelAnimationFrame(animationFrameRef.current), []);
 
   const markImageFailed = (side) => {
     setImageFailed((previous) => ({ ...previous, [side]: true }));
