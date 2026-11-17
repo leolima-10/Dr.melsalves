@@ -1,26 +1,47 @@
+import { useId } from 'react';
 import { motion, useReducedMotion } from 'motion/react';
-import { getWhatsAppLink } from '../config/site.js';
+import { DISPLAY_NAME, PROFESSIONAL, getWhatsAppLink } from '../config/site.js';
 import { trackWhatsAppClick } from '../lib/analytics.js';
 
-// Ornamento decorativo: o nome da marca vem sempre em texto ao lado, então fica oculto
-// para leitores de tela.
-export function HoneycombMark({ className = '' }) {
+// Logo "abelha traço fino" (Paper, logo-dramel, artboard 01): abelha em traço cor de mel
+// ao lado de "Mel *Salves*". As asas passam por trás do corpo (a máscara recorta o corpo),
+// então o desenho funciona sobre qualquer fundo. O nome completo fica em texto para
+// leitores de tela; o desenho é decorativo.
+export function BrandLogo({ className = '' }) {
+  const maskId = `bee-wings-${useId().replace(/:/g, '')}`;
   return (
-    <svg className={className} viewBox="0 0 48 48" aria-hidden="true" focusable="false">
-      <path pathLength="1" d="M24 2.8 43 13.4v21.2L24 45.2 5 34.6V13.4z" />
-      <text
-        x="24"
-        y="27"
-        fill="currentColor"
-        stroke="none"
-        textAnchor="middle"
-        fontFamily="Cormorant Garamond, Georgia, serif"
-        fontSize="13"
-        fontWeight="600"
+    <span className={`brand-logo ${className}`.trim()}>
+      <svg
+        className="brand-logo__bee"
+        viewBox="22 18 76 88"
+        fill="none"
+        stroke="var(--color-honey)"
+        strokeWidth="2.6"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        aria-hidden="true"
+        focusable="false"
       >
-        MS
-      </text>
-    </svg>
+        <mask id={maskId} maskUnits="userSpaceOnUse" x="0" y="0" width="120" height="120">
+          <rect width="120" height="120" fill="#fff" stroke="none" />
+          <ellipse cx="60" cy="72" rx="14" ry="22" fill="#000" stroke="none" />
+          <circle cx="60" cy="42" r="7" fill="#000" stroke="none" />
+        </mask>
+        <g mask={`url(#${maskId})`}>
+          <ellipse cx="42" cy="46" rx="18" ry="10" transform="rotate(-32 42 46)" />
+          <ellipse cx="78" cy="46" rx="18" ry="10" transform="rotate(32 78 46)" />
+        </g>
+        <ellipse cx="60" cy="72" rx="14" ry="22" />
+        <path d="M47 66 H73 M47 78 H73" />
+        <circle cx="60" cy="42" r="7" />
+        <path d="M56 36 Q52 27 46 25 M64 36 Q68 27 74 25" />
+        <path d="M60 94 V101" />
+      </svg>
+      <span className="brand-logo__name" aria-hidden="true">
+        {PROFESSIONAL.firstName} <em>{PROFESSIONAL.lastName}</em>
+      </span>
+      <span className="sr-only">{DISPLAY_NAME}</span>
+    </span>
   );
 }
 

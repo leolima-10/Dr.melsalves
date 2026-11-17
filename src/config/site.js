@@ -21,11 +21,8 @@ export const PROFESSIONAL = {
   profession: 'Biomédica esteta', // ex.: 'Biomédica esteta' | 'Biomédica'
   // Linhas de credencial exibidas no hero. Lista curta, só o que está confirmado.
   // ("Especialista" / "Expert" foram removidos até a cliente confirmar o uso.)
-  heroCredentials: [
-    'Biomédica esteta',
-    'Harmonização facial e estética avançada',
-    'Professora na Rede Pro Cursos',
-  ],
+  // "Harmonização facial & estética avançada" já aparece acima do título do hero; não repetir.
+  heroCredentials: ['Biomédica esteta', 'Professora na Rede Pro Cursos'],
   // Dados reais para a caixa "Sobre" e o rodapé. Vazio = não aparece.
   registration: '', // ex.: 'CRBM-1 nº 00000 / BA'
   education: '', // ex.: 'Biomedicina — Instituição, ano'

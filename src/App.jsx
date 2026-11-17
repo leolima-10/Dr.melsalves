@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import Lenis from 'lenis';
 import BeforeAfterSlider, { ComparisonBoard } from './components/BeforeAfterSlider.jsx';
 import {
-  HoneycombMark,
+  BrandLogo,
   InstagramIcon,
   SectionReveal,
   WhatsAppIcon,
@@ -10,14 +10,15 @@ import {
 } from './components/common.jsx';
 import {
   AreaCards,
-  InstagramBlock,
   Procedures,
-  TeachingBand,
+  TeachingNote,
   Testimonials,
-  Values,
+  ValuePillars,
 } from './components/Sections.jsx';
 import { cases } from './data/cases.js';
 import {
+  BRAND_PHRASE,
+  BRAND_SIGNATURE,
   DISPLAY_NAME,
   HERO_IMAGE,
   IDENTITY_PORTRAITS,
@@ -28,10 +29,11 @@ import {
   SHOW_IDENTITY_PORTRAITS,
 } from './config/site.js';
 
+// Mesma ordem das seções na página.
 const navItems = [
-  { href: '#sobre', label: 'Sobre' },
-  { href: '#procedimentos', label: 'Procedimentos' },
   { href: '#resultados', label: 'Resultados' },
+  { href: '#procedimentos', label: 'Procedimentos' },
+  { href: '#sobre', label: 'Sobre' },
   { href: '#atendimento', label: 'Atendimento' },
   { href: '#faq', label: 'FAQ' },
   { href: '#contato', label: 'Contato' },
@@ -116,8 +118,7 @@ function Header() {
     <header className={`site-header${scrolled || menuOpen ? ' site-header--scrolled' : ''}`}>
       <div className="site-header__inner">
         <a className="brand" href="#inicio" onClick={closeMenu}>
-          <HoneycombMark className="brand__mark" />
-          <span>{DISPLAY_NAME}</span>
+          <BrandLogo />
           <span className="sr-only">, início</span>
         </a>
         <button
@@ -178,7 +179,6 @@ function Hero() {
       )}
       <div className="hero__inner page-width">
         <div className="hero__frame">
-          <HoneycombMark className="hero__mini-mark" />
           <p className="hero__welcome">Harmonização facial &amp; estética avançada</p>
           <h1 id="hero-title">
             Seu rosto é sua <em>identidade.</em>
@@ -189,7 +189,7 @@ function Hero() {
           <div className="hero__actions">
             <WhatsAppLink context="hero" className="button button--gold">
               <WhatsAppIcon />
-              Agendar avaliação no WhatsApp
+              Agendar pelo WhatsApp
             </WhatsAppLink>
             <a className="text-link text-link--light" href="#resultados">
               Ver resultados
@@ -217,44 +217,31 @@ function IdentityPortrait({ src }) {
   );
 }
 
-function Identity() {
-  return (
-    <SectionReveal className="section identity-section" id="cuidado" aria-labelledby="identity-title">
-      <div className="page-width">
-        <h2 id="identity-title" className="identity__title">
-          cuidado <span>{'{individual}'}</span>
-          <br />
-          em cada rosto
-        </h2>
-        {SHOW_IDENTITY_PORTRAITS && IDENTITY_PORTRAITS.length > 0 && (
-          <div className="identity__strip">
-            {IDENTITY_PORTRAITS.map((src) => (
-              <IdentityPortrait key={src} src={src} />
-            ))}
-          </div>
-        )}
-        <p className="identity__text">
-          Cada pessoa tem uma história própria. O cuidado começa pela <strong><em>escuta</em></strong>{' '}
-          e pela avaliação individual.
-        </p>
-      </div>
-    </SectionReveal>
-  );
-}
-
 const aboutFacts = [
   { label: 'Formação', value: PROFESSIONAL.education },
   { label: 'Registro profissional', value: PROFESSIONAL.registration },
   { label: 'Experiência', value: PROFESSIONAL.experience },
 ].filter((fact) => fact.value);
 
+// Sobre: reúne a apresentação, a assinatura da marca ("Beleza natural"), os pilares e a
+// Rede Pro Cursos, que antes eram quatro seções repetindo a mesma mensagem.
 function About() {
   return (
     <SectionReveal className="section about-section" id="sobre" aria-labelledby="about-title">
       <div className="page-width about-layout">
-        <div className="section-heading">
-          <p className="section-kicker">Cuidado que começa pela escuta</p>
-          <h2 id="about-title">Beleza com identidade própria.</h2>
+        <div className="about-intro">
+          <p className="section-kicker">Sobre a {SHORT_NAME}</p>
+          <h2 id="about-title" className="about-title">
+            cuidado{' '}
+            <span className="about-title__accent">
+              <span aria-hidden="true">{'{'}</span>individual<span aria-hidden="true">{'}'}</span>
+            </span>
+            <br />
+            em cada rosto
+          </h2>
+          <p className="about-signature">
+            <em>{BRAND_SIGNATURE}.</em> {BRAND_PHRASE}
+          </p>
         </div>
         <div className="about-copy">
           <p>
@@ -277,8 +264,17 @@ function About() {
               ))}
             </div>
           )}
+          <ValuePillars />
+          <TeachingNote />
         </div>
       </div>
+      {SHOW_IDENTITY_PORTRAITS && IDENTITY_PORTRAITS.length > 0 && (
+        <div className="page-width identity__strip">
+          {IDENTITY_PORTRAITS.map((src) => (
+            <IdentityPortrait key={src} src={src} />
+          ))}
+        </div>
+      )}
     </SectionReveal>
   );
 }
@@ -308,7 +304,6 @@ function ResultGallery() {
       <div className="page-width">
         <div className="results-heading">
           <div className="section-heading">
-            <p className="section-kicker">Um olhar para cada detalhe</p>
             <h2 id="results-title">Resultados para comparar.</h2>
             <p>
               Arraste os pares interativos. Os resultados variam de pessoa para pessoa: cada caso
@@ -368,15 +363,16 @@ function CarePath() {
       aria-labelledby="care-title"
     >
       <div className="page-width">
-        <div className="section-heading section-heading--center">
-          <p className="section-kicker">Onde atendo</p>
-          <h2 id="care-title">Atendimento em Lauro de Freitas e Salvador</h2>
-          <p>
-            Também em Praia do Forte e Barra do Pojuca. Fale pelo WhatsApp para combinar o local
-            e o horário.
-          </p>
+        <div className="care-top">
+          <div className="section-heading">
+            <h2 id="care-title">Atendimento em Salvador e região metropolitana</h2>
+            <p>
+              Também em Praia do Forte e Barra do Pojuca. Fale pelo WhatsApp para combinar o
+              local e o horário.
+            </p>
+          </div>
+          <AreaCards />
         </div>
-        <AreaCards />
         <h3 className="care-steps-title">Como funciona o atendimento</h3>
         <ol className="care-steps">
           {steps.map((step, index) => (
@@ -397,7 +393,6 @@ function FAQ() {
     <SectionReveal className="section faq-section" id="faq" aria-labelledby="faq-title">
       <div className="page-width faq-layout">
         <div className="section-heading">
-          <p className="section-kicker">Antes de conversar</p>
           <h2 id="faq-title">Perguntas frequentes</h2>
           <p>Informações gerais. A avaliação individual orienta cada decisão.</p>
         </div>
@@ -448,8 +443,7 @@ function Footer() {
     <footer className="site-footer">
       <div className="page-width site-footer__top">
         <a className="brand brand--footer" href="#inicio">
-          <HoneycombMark className="brand__mark" />
-          <span>{DISPLAY_NAME}</span>
+          <BrandLogo />
         </a>
         {SHOW_CREDENTIALS && PROFESSIONAL.registration && (
           <p className="footer-registration">{PROFESSIONAL.registration}</p>
@@ -525,15 +519,11 @@ export default function App() {
       <Header />
       <main id="conteudo">
         <Hero />
-        <About />
-        <Values />
-        <Identity />
-        <Procedures />
         <ResultGallery />
+        <Procedures />
+        <About />
         <CarePath />
         <Testimonials />
-        <InstagramBlock />
-        <TeachingBand />
         <FAQ />
         <Contact />
       </main>

@@ -1,7 +1,4 @@
 import {
-  BRAND_PHRASE,
-  BRAND_SIGNATURE,
-  INSTAGRAM,
   REDE_PRO_CURSOS,
   SERVICE_AREAS,
   SHOW_RHINOMODELING,
@@ -10,14 +7,16 @@ import {
   VALUES,
 } from '../config/site.js';
 import { serviceGroups, services } from '../data/services.js';
-import { InstagramIcon, SectionReveal, WhatsAppLink } from './common.jsx';
+import { SectionReveal, WhatsAppIcon, WhatsAppLink } from './common.jsx';
 
 const flags = { SHOW_RHINOMODELING };
 const isServiceVisible = (service) => !service.requiresFlag || flags[service.requiresFlag];
 
 /* ------------------------------------------------------------------ */
-/* Procedimentos: 8 serviços agrupados em Face, Pele e Corpo           */
+/* Procedimentos: lista editorial agrupada em Face, Pele e Corpo        */
 /* ------------------------------------------------------------------ */
+// Lista em linhas (e não cards iguais): o nome do serviço é o que a paciente procura, então
+// ele ganha o peso tipográfico; o grupo fica numa coluna própria, em itálico, como índice.
 export function Procedures() {
   const visibleServices = services.filter(isServiceVisible);
 
@@ -28,8 +27,7 @@ export function Procedures() {
       aria-labelledby="procedures-title"
     >
       <div className="page-width">
-        <div className="section-heading section-heading--center">
-          <p className="section-kicker">Caminhos possíveis</p>
+        <div className="section-heading procedures-heading">
           <h2 id="procedures-title">Procedimentos</h2>
           <p>
             As possibilidades são conversadas com cuidado, sempre a partir de uma avaliação
@@ -45,7 +43,7 @@ export function Procedures() {
               <div className="procedure-list">
                 {items.map((service) => (
                   <article className="procedure-item" key={service.slug}>
-                    <div>
+                    <div className="procedure-item__text">
                       <h4>{service.name}</h4>
                       <p>{service.description}</p>
                     </div>
@@ -55,8 +53,8 @@ export function Procedures() {
                       className="procedure-item__link"
                       label={`Conversar sobre ${service.name} no WhatsApp`}
                     >
+                      <WhatsAppIcon />
                       Conversar
-                      <span aria-hidden="true">↗</span>
                     </WhatsAppLink>
                   </article>
                 ))}
@@ -70,7 +68,7 @@ export function Procedures() {
 }
 
 /* ------------------------------------------------------------------ */
-/* Valores da marca                                                    */
+/* Pilares da marca (dentro da seção Sobre)                            */
 /* ------------------------------------------------------------------ */
 const valueIcons = {
   ear: (
@@ -90,39 +88,45 @@ const valueIcons = {
   ),
 };
 
-export function Values() {
+export function ValuePillars() {
   return (
-    <SectionReveal className="section values-section" id="valores" aria-labelledby="values-title">
-      <div className="page-width">
-        <div className="values-signature">
-          <p className="section-kicker">Nossa assinatura</p>
-          <h2 id="values-title">{BRAND_SIGNATURE}</h2>
-          <p className="values-phrase">{BRAND_PHRASE}</p>
-        </div>
-        <ul className="values-list">
-          {VALUES.map((value) => (
-            <li className="value-item" key={value.title}>
-              <svg
-                className="value-item__icon"
-                viewBox="0 0 24 24"
-                aria-hidden="true"
-                focusable="false"
-              >
-                {valueIcons[value.icon]}
-              </svg>
-              <h3>{value.title}</h3>
-              <p>{value.text}</p>
-            </li>
-          ))}
-        </ul>
-      </div>
-    </SectionReveal>
+    <ul className="value-list">
+      {VALUES.map((value) => (
+        <li className="value-item" key={value.title}>
+          <svg className="value-item__icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            {valueIcons[value.icon]}
+          </svg>
+          <div>
+            <h3>{value.title}</h3>
+            <p>{value.text}</p>
+          </div>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/* Rede Pro Cursos: separa ensino de atendimento (dentro de Sobre)     */
+/* ------------------------------------------------------------------ */
+export function TeachingNote() {
+  return (
+    <aside className="teaching-note" aria-label="Rede Pro Cursos">
+      <p>{REDE_PRO_CURSOS.description}</p>
+      {/* A seta indica link externo (abre o Instagram da escola em nova aba). */}
+      <a href={REDE_PRO_CURSOS.url} target="_blank" rel="noopener noreferrer">
+        Conheça a Rede Pro Cursos
+        <span aria-hidden="true">↗</span>
+      </a>
+    </aside>
   );
 }
 
 /* ------------------------------------------------------------------ */
 /* Locais de atendimento: endereço, horário e mapa são opcionais       */
 /* ------------------------------------------------------------------ */
+// Lista tipográfica com marcador hexagonal (motivo de favo de mel). Sem endereço confirmado,
+// caixas vazias pareceriam placeholders; quando houver dados, eles aparecem sob o nome.
 export function AreaCards() {
   return (
     <ul className="area-list">
@@ -156,7 +160,6 @@ export function Testimonials() {
     >
       <div className="page-width">
         <div className="section-heading section-heading--center">
-          <p className="section-kicker">Experiências compartilhadas</p>
           <h2 id="testimonials-title">Depoimentos</h2>
         </div>
         <ul className="testimonial-list">
@@ -181,54 +184,3 @@ export function Testimonials() {
   );
 }
 
-/* ------------------------------------------------------------------ */
-/* Instagram em destaque                                               */
-/* ------------------------------------------------------------------ */
-export function InstagramBlock() {
-  return (
-    <SectionReveal
-      className="instagram-band"
-      id="instagram"
-      aria-labelledby="instagram-title"
-    >
-      <div className="page-width instagram-band__inner">
-        <div>
-          <p className="section-kicker">Acompanhe de perto</p>
-          <h2 id="instagram-title">@{INSTAGRAM.handle}</h2>
-          <p>Conheça mais sobre o trabalho e acompanhe as novidades no Instagram.</p>
-        </div>
-        <a
-          className="button button--dark"
-          href={INSTAGRAM.url}
-          target="_blank"
-          rel="noopener noreferrer"
-          data-link-origin="instagram-band"
-        >
-          <InstagramIcon />
-          Seguir no Instagram
-        </a>
-      </div>
-    </SectionReveal>
-  );
-}
-
-/* ------------------------------------------------------------------ */
-/* Rede Pro Cursos: separa ensino de atendimento                       */
-/* ------------------------------------------------------------------ */
-export function TeachingBand() {
-  return (
-    <SectionReveal className="teaching-band" aria-labelledby="teaching-title">
-      <div className="page-width teaching-band__inner">
-        <div>
-          <p className="section-kicker">Compartilhando conhecimento</p>
-          <h2 id="teaching-title">Professora na Rede Pro Cursos</h2>
-          <p className="teaching-band__text">{REDE_PRO_CURSOS.description}</p>
-        </div>
-        <a href={REDE_PRO_CURSOS.url} target="_blank" rel="noopener noreferrer">
-          Conheça a Rede Pro Cursos
-          <span aria-hidden="true">↗</span>
-        </a>
-      </div>
-    </SectionReveal>
-  );
-}
