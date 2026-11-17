@@ -156,14 +156,20 @@ function Hero() {
   const [imageOk, setImageOk] = useState(true);
 
   return (
-    <section className="hero" id="inicio" aria-labelledby="hero-title">
+    <section
+      className={`hero${HERO_IMAGE && imageOk ? ' hero--photo' : ''}`}
+      id="inicio"
+      aria-labelledby="hero-title"
+    >
       {HERO_IMAGE && imageOk && (
         <div className="hero__media" aria-hidden="true">
           <img
-            src={HERO_IMAGE}
+            src={HERO_IMAGE.src}
+            srcSet={HERO_IMAGE.srcSet}
+            sizes="(min-width: 861px) 54vw, 100vw"
             alt=""
-            width="1600"
-            height="1067"
+            width={HERO_IMAGE.width}
+            height={HERO_IMAGE.height}
             fetchPriority="high"
             decoding="async"
             onError={() => setImageOk(false)}

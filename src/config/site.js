@@ -50,9 +50,14 @@ export const SHOW_RHINOMODELING = false; // card de rinomodelação (cliente pre
 // Faixa de retratos da seção "cuidado individual". Os arquivos abaixo ainda não existem em
 // public/img/identidade/: ligue a flag só depois de adicioná-los (e ter autorização de uso).
 export const SHOW_IDENTITY_PORTRAITS = false;
-// Foto de fundo do hero (1600x1067). O arquivo antigo /img/hero-identidade.webp não existe em
-// public/: informe o caminho aqui depois de adicioná-lo (ou deixe null para o fundo escuro liso).
-export const HERO_IMAGE = null;
+// Foto do hero (vertical, 3:4). Origem: imagens/drmel-escritorio.jpg, recortada (sem a pessoa
+// parcial à esquerda) e exportada em 800 e 1200 px. Use null para o fundo escuro liso.
+export const HERO_IMAGE = {
+  src: '/img/hero-escritorio-1200.webp',
+  srcSet: '/img/hero-escritorio-800.webp 800w, /img/hero-escritorio-1200.webp 1200w',
+  width: 1200,
+  height: 1636,
+};
 export const IDENTITY_PORTRAITS = [
   '/img/identidade/retrato-01.webp',
   '/img/identidade/retrato-02.webp',

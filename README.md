@@ -59,5 +59,5 @@ As imagens-fonte recebidas estão em `imagens/`. Os pares de lábios e perfil fo
 - Enviar depoimentos reais com autorização, antes de ativar `SHOW_TESTIMONIALS`.
 - Confirmar se oferece rinomodelação (`SHOW_RHINOMODELING`) e conferir o pareamento antes/depois do `caso-08`.
 - Confirmar o que a Rede Pro Cursos ensina (texto em `REDE_PRO_CURSOS.description`).
-- Enviar as fotos de `public/img/identidade/` e o hero (`hero-identidade.webp`), ainda ausentes.
+- Enviar as fotos de `public/img/identidade/` (faixa "cuidado individual"), ainda ausentes. A foto do hero é `imagens/drmel-escritorio.jpg` (recortada, em `public/img/hero-escritorio-*.webp`; configurada em `HERO_IMAGE`).
 - Revisar as respostas do FAQ e o aviso de imagens autorizadas.

@@ -5,7 +5,7 @@ import * as config from '../src/config/site.js';
 import { services } from '../src/data/services.js';
 import { routes } from '../src/routes.js';
 
-const { SEO, SITE_URL, DISPLAY_NAME, PROFESSIONAL, INSTAGRAM, SERVICE_AREAS, WHATSAPP_PHONE } = config;
+const { SEO, SITE_URL, DISPLAY_NAME, PROFESSIONAL, INSTAGRAM, SERVICE_AREAS, WHATSAPP_PHONE, HERO_IMAGE } = config;
 
 const escapeAttr = (value) =>
   String(value).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
@@ -57,6 +57,8 @@ export function buildHeadTags() {
     `<meta name="description" content="${escapeAttr(SEO.description)}" />`,
     `<link rel="canonical" href="${absoluteUrl('/')}" />`,
     `<meta name="theme-color" content="${SEO.themeColor}" />`,
+    HERO_IMAGE &&
+      `<link rel="preload" as="image" href="${HERO_IMAGE.src}" imagesrcset="${HERO_IMAGE.srcSet}" imagesizes="(min-width: 861px) 54vw, 100vw" fetchpriority="high" />`,
     `<link rel="manifest" href="/site.webmanifest" />`,
     `<link rel="apple-touch-icon" href="/apple-touch-icon.png" />`,
     `<meta property="og:type" content="website" />`,

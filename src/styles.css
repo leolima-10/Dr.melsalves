@@ -2052,3 +2052,81 @@ img {
     stroke-dasharray: none;
   }
 }
+
+/* ---------- Hero com foto ---------- */
+/* Celular/tablet estreito: foto no topo, esmaecendo até o marrom; o texto fica abaixo do rosto. */
+.hero--photo {
+  padding-top: min(80vw, 460px);
+}
+
+.hero--photo .hero__media {
+  inset: 0 0 auto 0;
+  height: min(125vw, 720px);
+}
+
+.hero--photo .hero__media img {
+  object-position: 55% 12%;
+}
+
+.hero--photo .hero__media::after {
+  background: linear-gradient(
+    180deg,
+    rgba(42, 29, 20, 0.6) 0%,
+    rgba(42, 29, 20, 0) 20%,
+    rgba(42, 29, 20, 0.15) 50%,
+    var(--espresso) 96%
+  );
+}
+
+/* Desktop: texto à esquerda, foto à direita com a borda esquerda fundida ao fundo. */
+@media (min-width: 861px) {
+  .hero--photo {
+    padding-top: 112px;
+  }
+
+  .hero--photo .hero__media {
+    inset: 0 0 0 44%;
+    height: auto;
+  }
+
+  .hero--photo .hero__media img {
+    object-position: 50% 22%;
+  }
+
+  /* A borda esquerda da foto some por máscara (revela o fundo do hero, sem emenda). */
+  .hero--photo .hero__media {
+    -webkit-mask-image: linear-gradient(90deg, transparent 0%, rgba(0, 0, 0, 0.55) 16%, #000 42%);
+    mask-image: linear-gradient(90deg, transparent 0%, rgba(0, 0, 0, 0.55) 16%, #000 42%);
+  }
+
+  .hero--photo .hero__media::after {
+    background: linear-gradient(180deg, rgba(42, 29, 20, 0.6) 0%, rgba(42, 29, 20, 0) 22%);
+  }
+
+  .hero--photo h1 {
+    font-size: clamp(2.8rem, 4.6vw, 4.4rem);
+  }
+
+  .hero--photo .hero__inner {
+    align-items: flex-start;
+  }
+
+  .hero--photo .hero__frame {
+    width: min(100%, 640px);
+    align-items: flex-start;
+    text-align: left;
+  }
+
+  .hero--photo .hero__description {
+    margin-left: 0;
+  }
+
+  .hero--photo .hero__actions,
+  .hero--photo .hero__credentials {
+    justify-content: flex-start;
+  }
+
+  .hero--photo .hero__credentials span:first-child {
+    padding-left: 0;
+  }
+}
