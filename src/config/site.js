@@ -117,7 +117,7 @@ export const SEO = {
   ogImage: '/img/og-image.jpg', // 1200x630; vira URL absoluta no build
   ogImageWidth: 1200,
   ogImageHeight: 630,
-  ogImageAlt: `${DISPLAY_NAME}, ${PROFESSIONAL.profession.toLowerCase()}, em atendimento.`,
+  ogImageAlt: `${DISPLAY_NAME}, ${PROFESSIONAL.profession.toLowerCase()}.`,
   themeColor: '#FBF6EE',
   areaNames: AREA_NAMES,
 };

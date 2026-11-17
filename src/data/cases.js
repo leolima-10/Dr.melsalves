@@ -53,8 +53,9 @@ export const cases = [
     visible: true,
     titulo: 'Rinomodelação, segundo caso',
     procedimento: 'Rinomodelação',
-    // ATENÇÃO: os arquivos estão trocados de propósito no código original
-    // (antes = "-depois.webp", depois = "-antes.webp"). Confirmar com a cliente.
+    // ATENÇÃO: o código original já tinha antes/depois cruzados em relação aos nomes dos
+    // arquivos (antes = "-depois.webp", depois = "-antes.webp"). Não se sabe se é correção
+    // intencional ou engano: confirmar com a cliente qual foto é o "antes".
     antes: '/img/resultados/caso-08-depois.webp',
     depois: '/img/resultados/caso-08-antes.webp',
     largura: 600,

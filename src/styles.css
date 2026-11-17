@@ -107,6 +107,13 @@ img {
   outline-offset: 4px;
 }
 
+/* Sobre fundos escuros o marrom-dourado fica abaixo de 3:1: usa o dourado claro (9,6:1). */
+.hero :focus-visible,
+.contact-panel :focus-visible,
+.site-header:not(.site-header--scrolled) :focus-visible {
+  outline-color: #e5c27e;
+}
+
 .sr-only {
   position: absolute;
   width: 1px;
@@ -342,10 +349,10 @@ img {
 
 .hero h1 {
   margin: 0;
-  font-family: var(--font-hero);
-  font-size: clamp(2.9rem, 6.4vw, 5.4rem);
-  font-weight: 400;
-  letter-spacing: -0.035em;
+  font-family: var(--font-display);
+  font-size: clamp(3.1rem, 6.8vw, 5.8rem);
+  font-weight: 500;
+  letter-spacing: -0.025em;
   line-height: 0.98;
   text-wrap: balance;
 }
@@ -428,17 +435,17 @@ img {
 
 .identity__title {
   margin: 0 0 clamp(36px, 5vw, 60px);
-  font-family: var(--font-head);
+  font-family: var(--font-display);
   font-size: clamp(2.5rem, 6.2vw, 5.2rem);
-  font-weight: 600;
-  letter-spacing: -0.045em;
+  font-weight: 500;
+  letter-spacing: -0.025em;
   line-height: 1;
   text-align: center;
 }
 
 .identity__title span {
   color: #8a5a3c;
-  font-family: var(--font-hero);
+  font-family: var(--font-display);
   font-style: italic;
   font-weight: 400;
   letter-spacing: -0.02em;
@@ -1394,7 +1401,7 @@ img {
   }
 
   .hero h1 {
-    font-size: clamp(2.5rem, 12vw, 3.8rem);
+    font-size: clamp(2.8rem, 13vw, 4.2rem);
   }
 
   .hero__actions .button {
@@ -1639,7 +1646,7 @@ img {
   }
 
   .hero h1 {
-    font-size: clamp(2.5rem, 12vw, 3.8rem);
+    font-size: clamp(2.8rem, 13vw, 4.2rem);
   }
 
   .hero__actions .button {
@@ -1659,7 +1666,7 @@ img {
   }
 
   .hero h1 {
-    font-size: clamp(2.4rem, 11.5vw, 3.2rem);
+    font-size: clamp(2.7rem, 12.5vw, 3.4rem);
   }
 
   .hero__credentials span {
