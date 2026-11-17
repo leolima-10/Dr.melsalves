@@ -6,11 +6,17 @@ import Lenis from 'lenis';
 import BeforeAfterSlider, { ComparisonBoard } from './components/BeforeAfterSlider.jsx';
 import { cases } from './data/cases.js';
 import {
-  CONTACT_INFO,
+  DISPLAY_NAME,
   getWhatsAppLink,
+  INSTAGRAM,
+  PROFESSIONAL,
+  REDE_PRO_CURSOS,
+  SHORT_NAME,
+  SHOW_CREDENTIALS,
   SHOW_TESTIMONIALS,
+  SITE_URL,
   WHATSAPP_PHONE,
-} from './config.js';
+} from './config/site.js';
 
 gsap.registerPlugin(useGSAP);
 
@@ -88,7 +94,7 @@ const faqs = [
   {
     question: 'Como faço para agendar?',
     answer:
-      'Toque em um dos botões de WhatsApp desta página para iniciar uma conversa com a Dra. Mel e solicitar uma avaliação.',
+      `Toque em um dos botões de WhatsApp desta página para iniciar uma conversa com a ${SHORT_NAME} e solicitar uma avaliação.`,
   },
 ];
 
@@ -194,9 +200,9 @@ function Header() {
   return (
     <header className={`site-header${scrolled || menuOpen ? ' site-header--scrolled' : ''}`}>
       <div className="site-header__inner">
-        <a className="brand" href="#inicio" onClick={closeMenu} aria-label="Dra. Mel Salves, início">
+        <a className="brand" href="#inicio" onClick={closeMenu} aria-label={`${DISPLAY_NAME}, início`}>
           <HoneycombMark className="brand__mark" />
-          <span>Dra. Mel Salves</span>
+          <span>{DISPLAY_NAME}</span>
         </a>
         <button
           className="menu-toggle"
@@ -303,9 +309,9 @@ function Hero() {
           </div>
         </div>
         <div className="hero__credentials" aria-label="Atuação profissional">
-          <span>Especialista em Harmonização Facial</span>
-          <span>Expert em Preenchimento Labial</span>
-          <span>Professora na Rede Pro Cursos</span>
+          {PROFESSIONAL.heroCredentials.map((credential) => (
+            <span key={credential}>{credential}</span>
+          ))}
         </div>
       </div>
     </section>
@@ -352,6 +358,12 @@ function Identity() {
   );
 }
 
+const aboutFacts = [
+  { label: 'Formação', value: PROFESSIONAL.education },
+  { label: 'Registro profissional', value: PROFESSIONAL.registration },
+  { label: 'Experiência', value: PROFESSIONAL.experience },
+].filter((fact) => fact.value);
+
 function About() {
   return (
     <SectionReveal className="section about-section" id="sobre" aria-labelledby="about-title">
@@ -362,16 +374,20 @@ function About() {
         </div>
         <div className="about-copy">
           <p>
-            Sou a Dra. Mel Salves, especialista em Harmonização Facial, expert em
-            Preenchimento Labial e professora na Rede Pro Cursos. Meu trabalho é guiado
-            pela avaliação individual e por um planejamento que respeita as características
-            de cada pessoa.
+            Sou a {DISPLAY_NAME}, {PROFESSIONAL.profession.toLowerCase()} e professora na Rede
+            Pro Cursos. Meu trabalho é guiado pela avaliação individual e por um planejamento
+            que respeita as características de cada pessoa.
           </p>
-          <div className="about-facts">
-            <p><span>Formação</span><strong>[PREENCHER: formação]</strong></p>
-            <p><span>Registro profissional</span><strong>[PREENCHER: conselho, nº e UF]</strong></p>
-            <p><span>Experiência</span><strong>[PREENCHER: tempo de experiência]</strong></p>
-          </div>
+          {SHOW_CREDENTIALS && aboutFacts.length > 0 && (
+            <div className="about-facts">
+              {aboutFacts.map((fact) => (
+                <p key={fact.label}>
+                  <span>{fact.label}</span>
+                  <strong>{fact.value}</strong>
+                </p>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </SectionReveal>
@@ -537,7 +553,7 @@ function TeachingBand() {
           <p className="section-kicker">Compartilhando conhecimento</p>
           <h2>Professora na Rede Pro Cursos</h2>
         </div>
-        <a href="https://www.instagram.com/redeprocursos/" target="_blank" rel="noopener noreferrer">
+        <a href={REDE_PRO_CURSOS.url} target="_blank" rel="noopener noreferrer">
           Conheça a Rede Pro Cursos
           <span aria-hidden="true">↗</span>
         </a>
@@ -575,7 +591,7 @@ function Contact() {
         <div className="contact-panel__copy">
           <p className="section-kicker">Vamos conversar?</p>
           <h2 id="contact-title">O primeiro passo é uma avaliação.</h2>
-          <p>Fale com a Dra. Mel para conversar sobre suas expectativas.</p>
+          <p>Fale com a {SHORT_NAME} para conversar sobre suas expectativas.</p>
         </div>
         <div className="contact-panel__actions">
           <WhatsAppLink context="general" className="button button--gold">
@@ -584,24 +600,13 @@ function Contact() {
           </WhatsAppLink>
           <a
             className="contact-instagram"
-            href="https://www.instagram.com/dramelsalves"
+            href={INSTAGRAM.url}
             target="_blank"
             rel="noopener noreferrer"
           >
             <InstagramIcon />
-            @dramelsalves
+            @{INSTAGRAM.handle}
           </a>
-          {(CONTACT_INFO.address || CONTACT_INFO.hours || CONTACT_INFO.mapUrl) && (
-            <div className="contact-details">
-              {CONTACT_INFO.address && <p>{CONTACT_INFO.address}</p>}
-              {CONTACT_INFO.hours && <p>{CONTACT_INFO.hours}</p>}
-              {CONTACT_INFO.mapUrl && (
-                <a href={CONTACT_INFO.mapUrl} target="_blank" rel="noopener noreferrer">
-                  Ver localização
-                </a>
-              )}
-            </div>
-          )}
         </div>
       </div>
     </SectionReveal>
@@ -614,13 +619,13 @@ function Footer() {
       <div className="page-width site-footer__top">
         <a className="brand brand--footer" href="#inicio">
           <HoneycombMark className="brand__mark" />
-          <span>Dra. Mel Salves</span>
+          <span>{DISPLAY_NAME}</span>
         </a>
-        <p className="footer-registration">
-          [PREENCHER: conselho profissional + nº de registro + UF]
-        </p>
+        {SHOW_CREDENTIALS && PROFESSIONAL.registration && (
+          <p className="footer-registration">{PROFESSIONAL.registration}</p>
+        )}
         <div className="footer-links">
-          <a href="https://www.instagram.com/dramelsalves" target="_blank" rel="noopener noreferrer">
+          <a href={INSTAGRAM.url} target="_blank" rel="noopener noreferrer">
             Instagram
           </a>
           <WhatsAppLink context="footer">WhatsApp</WhatsAppLink>
@@ -631,7 +636,7 @@ function Footer() {
           Os resultados variam de pessoa para pessoa. A publicação das imagens depende de
           autorização dos pacientes. Todo procedimento é realizado mediante avaliação individual.
         </p>
-        <span>© {new Date().getFullYear()} Dra. Mel Salves</span>
+        <span>© {new Date().getFullYear()} {DISPLAY_NAME}</span>
       </div>
     </footer>
   );
@@ -666,7 +671,7 @@ function FloatingWhatsApp() {
     <WhatsAppLink
       context="floating"
       className={`floating-whatsapp${mainCtaVisible ? ' floating-whatsapp--hidden' : ''}`}
-      label="Conversar com a Dra. Mel pelo WhatsApp"
+      label={`Conversar com a ${SHORT_NAME} pelo WhatsApp`}
     >
       <WhatsAppIcon />
       <span>WhatsApp</span>
@@ -688,9 +693,10 @@ export default function App() {
   const structuredData = {
     '@context': 'https://schema.org',
     '@type': 'HealthAndBeautyBusiness',
-    name: 'Dra. Mel Salves',
+    name: DISPLAY_NAME,
+    url: SITE_URL,
     telephone: `+${WHATSAPP_PHONE}`,
-    sameAs: ['https://www.instagram.com/dramelsalves'],
+    sameAs: [INSTAGRAM.url],
   };
 
   return (
