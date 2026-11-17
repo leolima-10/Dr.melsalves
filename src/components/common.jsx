@@ -1,10 +1,13 @@
 import { motion, useReducedMotion } from 'motion/react';
 import { getWhatsAppLink } from '../config/site.js';
+import { trackWhatsAppClick } from '../lib/analytics.js';
 
+// Ornamento decorativo: o nome da marca vem sempre em texto ao lado, então fica oculto
+// para leitores de tela.
 export function HoneycombMark({ className = '' }) {
   return (
-    <svg className={className} viewBox="0 0 48 48" role="img" aria-label="Monograma MS em um hexágono">
-      <path d="M24 2.8 43 13.4v21.2L24 45.2 5 34.6V13.4z" />
+    <svg className={className} viewBox="0 0 48 48" aria-hidden="true" focusable="false">
+      <path pathLength="1" d="M24 2.8 43 13.4v21.2L24 45.2 5 34.6V13.4z" />
       <text
         x="24"
         y="27"
@@ -54,6 +57,7 @@ export function WhatsAppLink({ context = 'general', service, className = '', chi
       target="_blank"
       rel="noopener noreferrer"
       aria-label={label}
+      onClick={() => trackWhatsAppClick({ context, service })}
       data-whatsapp-context={context}
       data-whatsapp-service={service}
     >
@@ -65,13 +69,16 @@ export function WhatsAppLink({ context = 'general', service, className = '', chi
 export function SectionReveal({ className, children, ...props }) {
   const shouldReduceMotion = useReducedMotion();
 
+  // `initial` é sempre o mesmo para o HTML pré-renderizado coincidir com o do cliente
+  // (evita erro de hidratação). Com reduced-motion, a revelação é instantânea (duração 0).
+  // Sem JavaScript, o <noscript> do index.html mantém as seções visíveis.
   return (
     <motion.section
       className={className}
-      initial={shouldReduceMotion ? false : { opacity: 0 }}
-      whileInView={shouldReduceMotion ? undefined : { opacity: 1 }}
+      initial={{ opacity: 0 }}
+      whileInView={{ opacity: 1 }}
       viewport={{ once: true, amount: 0.16 }}
-      transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+      transition={{ duration: shouldReduceMotion ? 0 : 0.55, ease: [0.22, 1, 0.36, 1] }}
       {...props}
     >
       {children}

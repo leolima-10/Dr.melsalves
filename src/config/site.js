@@ -50,6 +50,9 @@ export const SHOW_RHINOMODELING = false; // card de rinomodelação (cliente pre
 // Faixa de retratos da seção "cuidado individual". Os arquivos abaixo ainda não existem em
 // public/img/identidade/: ligue a flag só depois de adicioná-los (e ter autorização de uso).
 export const SHOW_IDENTITY_PORTRAITS = false;
+// Foto de fundo do hero (1600x1067). O arquivo antigo /img/hero-identidade.webp não existe em
+// public/: informe o caminho aqui depois de adicioná-lo (ou deixe null para o fundo escuro liso).
+export const HERO_IMAGE = null;
 export const IDENTITY_PORTRAITS = [
   '/img/identidade/retrato-01.webp',
   '/img/identidade/retrato-02.webp',

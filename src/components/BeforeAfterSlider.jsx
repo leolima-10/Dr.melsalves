@@ -13,13 +13,22 @@ function PlaceholderPhoto({ label }) {
 
 export function ComparisonBoard({ item }) {
   const [imageFailed, setImageFailed] = useState(false);
+  const imageRef = useRef(null);
+
+  useEffect(() => {
+    const img = imageRef.current;
+    if (img && img.complete && img.naturalWidth === 0) setImageFailed(true);
+  }, []);
 
   return (
     <div className="comparison-board">
       {!imageFailed ? (
         <img
+          ref={imageRef}
           src={item.imagem}
           alt={item.alt}
+          width={item.largura}
+          height={item.altura}
           loading="lazy"
           decoding="async"
           draggable="false"
@@ -136,6 +145,16 @@ export default function BeforeAfterSlider({ item }) {
     setImageFailed((previous) => ({ ...previous, [side]: true }));
   };
 
+  // O HTML é pré-renderizado: se uma imagem falhou antes da hidratação, o evento onError já
+  // passou. Confere ao montar para manter o placeholder.
+  useEffect(() => {
+    const failed = (img) => img && img.complete && img.naturalWidth === 0;
+    const after = frameRef.current?.querySelector('.compare-slider__image--after img');
+    const before = frameRef.current?.querySelector('.compare-slider__before img');
+    if (failed(after)) markImageFailed('after');
+    if (failed(before)) markImageFailed('before');
+  }, []);
+
   return (
     <div
       ref={frameRef}
@@ -152,6 +171,8 @@ export default function BeforeAfterSlider({ item }) {
           <img
             src={item.depois}
             alt={`${item.alt} Depois.`}
+            width={item.largura}
+            height={item.altura}
             loading="lazy"
             decoding="async"
             draggable="false"
@@ -168,6 +189,8 @@ export default function BeforeAfterSlider({ item }) {
             <img
               src={item.antes}
               alt={`${item.alt} Antes.`}
+              width={item.largura}
+              height={item.altura}
               loading="lazy"
               decoding="async"
               draggable="false"

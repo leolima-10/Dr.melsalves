@@ -3,7 +3,7 @@
 
 ## Project overview
 
-This repository is a single-page marketing site for Dra. Mel Salves, built with Vite, React, and Tailwind CSS. It is intended for static deployment on Vercel and does not include a backend or environment-dependent runtime configuration.
+This repository is a single-page marketing site for Dra. Mel Salves, built with Vite, React, and Tailwind CSS. It is intended for static deployment on Vercel and does not include a backend. The build pre-renders the HTML (SSG via `build/prerender.js`); analytics env vars (`VITE_GA4_ID`, `VITE_META_PIXEL_ID`) are optional.
 
 The app is structured as a landing page with sections such as hero, about, procedures, results, attendance, FAQ, and contact. Most content is intentionally front-loaded into a few central files so copy and contact details are easy to update without digging through the component tree.
 
@@ -16,7 +16,7 @@ The repository currently exposes these scripts in `package.json`:
 - `npm run build` — create the production bundle in `dist/`
 - `npm run preview` — preview the built site locally
 
-There is no `test` or `lint` script configured in this project right now, so there is no single-file test command to use. The reliable validation command for frontend changes is `npm run build`.
+There is no `test` or `lint` script configured in this project right now, so there is no single-file test command to use. Validate with `npm run build` and check the browser console: the build does not catch undefined identifiers or hydration mismatches.
 
 ## Architecture at a glance
 
@@ -33,7 +33,7 @@ This project is content-driven: most changes are likely to touch a few central f
 
 ## Key conventions
 
-- Keep marketing copy in `src/App.jsx` or `src/config.js` instead of scattering text across small components. This site is editorial and configuration-driven rather than data-heavy.
+- Keep marketing copy in `src/App.jsx`, `src/components/Sections.jsx` or `src/config/site.js` instead of scattering text across small components. This site is editorial and configuration-driven rather than data-heavy.
 - Use `getWhatsAppLink(context)` from `src/config/site.js` (via `<WhatsAppLink>`) for WhatsApp CTAs instead of building raw URLs ad hoc. It centralizes the phone number and the message text.
 - Keep result references synchronized with `src/data/cases.js`: the `id`, file paths, titles, and `alt` content must match the actual files in `public/img/resultados/`.
 - Prefer static assets under `public/` and reference them with root-relative paths such as `/img/...`.

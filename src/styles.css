@@ -1,5 +1,22 @@
 @import "tailwindcss";
 
+/* Fontes autohospedadas (OFL), subset latin: cobre o português. Arquivos variáveis em /public/fonts. */
+@font-face {
+  font-family: "Cormorant Garamond";
+  font-style: normal;
+  font-weight: 400 600;
+  font-display: swap;
+  src: url("/fonts/cormorant-garamond-latin.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "DM Sans";
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url("/fonts/dm-sans-latin.woff2") format("woff2");
+}
+
 @theme {
   --color-cream: #fbf6ee;
   --color-champagne: #f1e4cf;
@@ -127,10 +144,14 @@ img {
   z-index: 30;
   inset: 0 0 auto;
   color: var(--paper);
-  transition: background-color 200ms ease, color 200ms ease, box-shadow 200ms ease;
+  /* Degradê escuro garante o contraste do texto claro sobre qualquer fundo (inclusive uma foto
+     futura no hero). Sem transição de cor/fundo: durante um fade o texto claro ficaria sobre
+     fundo claro. A troca entre os estados é instantânea. */
+  background-image: linear-gradient(180deg, rgba(20, 12, 7, 0.78), rgba(20, 12, 7, 0));
 }
 
 .site-header--scrolled {
+  background-image: none;
   background: rgba(251, 246, 238, 0.96);
   color: var(--espresso);
   box-shadow: 0 1px 0 rgba(42, 29, 20, 0.1);
@@ -183,6 +204,11 @@ img {
 
 .primary-nav > a:not(.button):hover {
   color: var(--honey);
+}
+
+/* Dourado sobre creme não atinge 4,5:1: no cabeçalho claro o hover usa o dourado escuro. */
+.site-header--scrolled .primary-nav > a:not(.button):hover {
+  color: #684715;
 }
 
 .menu-toggle {
@@ -246,10 +272,17 @@ img {
   align-items: center;
   overflow: hidden;
   padding: 112px 0 64px;
-  background:
-    radial-gradient(ellipse at 50% 60%, rgba(201, 151, 63, 0.2), transparent 55%),
-    var(--espresso);
+  background: var(--espresso);
   color: var(--paper);
+}
+
+/* Brilho dourado: em pseudo-elemento para o fundo do hero continuar sólido (contraste verificável). */
+.hero::before {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 50% 60%, rgba(201, 151, 63, 0.2), transparent 55%);
+  content: "";
+  pointer-events: none;
 }
 
 .hero__media {
@@ -950,7 +983,7 @@ img {
   font-size: 1.35rem;
 }
 
-.care-step h3 {
+.care-step h4 {
   margin: 0;
   font-family: var(--font-display);
   font-size: 1.55rem;
@@ -1595,6 +1628,31 @@ img {
   }
 }
 
+@media (max-width: 760px) {
+  .hero {
+    min-height: auto;
+    padding: 104px 0 44px;
+  }
+
+  .hero__frame {
+    padding: 30px 20px 34px;
+  }
+
+  .hero h1 {
+    font-size: clamp(2.5rem, 12vw, 3.8rem);
+  }
+
+  .hero__actions .button {
+    width: 100%;
+  }
+
+  .hero__credentials span {
+    min-height: 30px;
+    padding: 4px 10px;
+    font-size: 0.72rem;
+  }
+}
+
 @media (max-width: 390px) {
   .page-width {
     width: calc(100% - 32px);
@@ -1634,29 +1692,6 @@ img {
     animation-duration: 0.01ms !important;
   }
 }
-  .hero {
-    min-height: auto;
-    padding: 104px 0 44px;
-  }
-
-  .hero__frame {
-    padding: 30px 20px 34px;
-  }
-
-  .hero h1 {
-    font-size: clamp(2.5rem, 12vw, 3.8rem);
-  }
-
-  .hero__actions .button {
-    width: 100%;
-  }
-
-  .hero__credentials span {
-    min-height: 30px;
-    padding: 4px 10px;
-    font-size: 0.72rem;
-  }
-
 
 /* ---------- Procedimentos agrupados (Face, Pele, Corpo) ---------- */
 .procedure-group {
@@ -1927,5 +1962,86 @@ img {
     align-items: stretch;
     flex-direction: column;
     gap: 24px;
+  }
+}
+
+/* ---------- Entrada do hero (CSS puro: funciona no HTML pré-renderizado) ---------- */
+@keyframes hero-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes hero-rise {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes hero-draw {
+  from { stroke-dashoffset: 1; }
+  to { stroke-dashoffset: 0; }
+}
+
+@keyframes hero-zoom {
+  from { transform: scale(1.06); }
+  to { transform: none; }
+}
+
+.hero__media img {
+  animation: hero-zoom 1.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* O título (LCP) nunca começa transparente: só desliza (transform), para aparecer no primeiro frame. */
+@keyframes hero-slide {
+  from { transform: translateY(14px); }
+  to { transform: none; }
+}
+
+@keyframes hero-border {
+  from { border-color: transparent; }
+}
+
+.hero__frame {
+  animation: hero-border 0.7s ease-out both;
+}
+
+.hero__frame > :not(.hero__mini-mark) {
+  animation: hero-slide 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.hero__frame > .hero__welcome,
+.hero__frame > .hero__actions {
+  animation-name: hero-rise;
+}
+
+.hero__frame > :nth-child(2) { animation-delay: 0.05s; }
+.hero__frame > :nth-child(3) { animation-delay: 0.11s; }
+.hero__frame > :nth-child(4) { animation-delay: 0.17s; }
+.hero__frame > :nth-child(5) { animation-delay: 0.23s; }
+
+.hero__mini-mark path {
+  stroke-dasharray: 1;
+  animation: hero-draw 0.9s ease-out 0.2s both;
+}
+
+.hero__credentials span {
+  animation: hero-rise 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.hero__credentials span:nth-child(1) { animation-delay: 0.45s; }
+.hero__credentials span:nth-child(2) { animation-delay: 0.52s; }
+.hero__credentials span:nth-child(3) { animation-delay: 0.59s; }
+.hero__credentials span:nth-child(4) { animation-delay: 0.66s; }
+
+@media (prefers-reduced-motion: reduce) {
+  .hero__media img,
+  .hero__frame,
+  .hero__frame > *,
+  .hero__mini-mark path,
+  .hero__credentials span {
+    animation: none !important;
+  }
+
+  .hero__mini-mark path {
+    stroke-dasharray: none;
   }
 }

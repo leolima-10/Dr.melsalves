@@ -1,7 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
-import { useReducedMotion } from 'motion/react';
-import gsap from 'gsap';
-import { useGSAP } from '@gsap/react';
+import { useEffect, useState } from 'react';
 import Lenis from 'lenis';
 import BeforeAfterSlider, { ComparisonBoard } from './components/BeforeAfterSlider.jsx';
 import {
@@ -22,6 +19,7 @@ import {
 import { cases } from './data/cases.js';
 import {
   DISPLAY_NAME,
+  HERO_IMAGE,
   IDENTITY_PORTRAITS,
   INSTAGRAM,
   PROFESSIONAL,
@@ -29,8 +27,6 @@ import {
   SHOW_CREDENTIALS,
   SHOW_IDENTITY_PORTRAITS,
 } from './config/site.js';
-
-gsap.registerPlugin(useGSAP);
 
 const navItems = [
   { href: '#sobre', label: 'Sobre' },
@@ -119,9 +115,10 @@ function Header() {
   return (
     <header className={`site-header${scrolled || menuOpen ? ' site-header--scrolled' : ''}`}>
       <div className="site-header__inner">
-        <a className="brand" href="#inicio" onClick={closeMenu} aria-label={`${DISPLAY_NAME}, início`}>
+        <a className="brand" href="#inicio" onClick={closeMenu}>
           <HoneycombMark className="brand__mark" />
           <span>{DISPLAY_NAME}</span>
+          <span className="sr-only">, início</span>
         </a>
         <button
           className="menu-toggle"
@@ -154,52 +151,19 @@ function Header() {
 }
 
 function Hero() {
-  const shouldReduceMotion = useReducedMotion();
-  const heroRef = useRef(null);
+  // A entrada do hero é feita só com CSS (ver "hero-*" em styles.css), para funcionar já no
+  // HTML pré-renderizado, sem esperar o JavaScript nem "piscar" depois da hidratação.
   const [imageOk, setImageOk] = useState(true);
 
-  useGSAP(
-    () => {
-      if (shouldReduceMotion) return;
-
-      const markPath = heroRef.current?.querySelector('.hero__mini-mark path');
-      const timeline = gsap.timeline({
-        defaults: { ease: 'power3.out' },
-      });
-
-      timeline
-        .from('.hero__media img', { scale: 1.06, duration: 1.8, ease: 'power2.out' }, 0)
-        .from('.hero__frame', { autoAlpha: 0, duration: 0.8 }, 0.1)
-        .from(
-          '.hero__frame > *:not(.hero__mini-mark)',
-          { autoAlpha: 0, y: 14, duration: 0.6, stagger: 0.09 },
-          0.3,
-        )
-        .from(
-          '.hero__credentials span',
-          { autoAlpha: 0, y: 8, duration: 0.4, stagger: 0.07 },
-          '-=0.3',
-        );
-
-      if (markPath) {
-        const pathLength = markPath.getTotalLength();
-        gsap.set(markPath, {
-          strokeDasharray: pathLength,
-          strokeDashoffset: pathLength,
-        });
-        timeline.to(markPath, { strokeDashoffset: 0, duration: 0.9 }, 0.4);
-      }
-    },
-    { scope: heroRef, dependencies: [shouldReduceMotion], revertOnUpdate: true },
-  );
-
   return (
-    <section ref={heroRef} className="hero" id="inicio" aria-labelledby="hero-title">
-      {imageOk && (
+    <section className="hero" id="inicio" aria-labelledby="hero-title">
+      {HERO_IMAGE && imageOk && (
         <div className="hero__media" aria-hidden="true">
           <img
-            src="/img/hero-identidade.webp"
+            src={HERO_IMAGE}
             alt=""
+            width="1600"
+            height="1067"
             fetchPriority="high"
             decoding="async"
             onError={() => setImageOk(false)}
@@ -412,7 +376,7 @@ function CarePath() {
           {steps.map((step, index) => (
             <li className="care-step" key={step.title}>
               <span className="care-step__number">{String(index + 1).padStart(2, '0')}</span>
-              <h3>{step.title}</h3>
+              <h4>{step.title}</h4>
               <p>{step.text}</p>
             </li>
           ))}

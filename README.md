@@ -20,7 +20,15 @@ npm run preview
 
 ## Publicar na Vercel
 
-Importe o repositório na Vercel. O preset Vite usa `npm run build` e a pasta de saída `dist`. Não há backend. Variáveis de ambiente são opcionais (analytics, ver abaixo).
+Importe o repositório na Vercel. O build (`npm run build`) pré-renderiza o HTML da página (SSG), então os buscadores e o preview de links recebem o conteúdo completo. O preset Vite usa `npm run build` e a pasta de saída `dist`. Não há backend. Variáveis de ambiente são opcionais (analytics, ver abaixo).
+
+## Analytics (opcional)
+
+GA4 e Meta Pixel ficam desligados. Para ligar, defina na Vercel (Settings > Environment Variables) `VITE_GA4_ID` e/ou `VITE_META_PIXEL_ID` (ver `.env.example`) e faça um novo deploy. Todo botão de WhatsApp dispara o evento `whatsapp_click` com a origem (hero, header, procedures, gallery, contact, footer, floating) e, quando houver, o serviço. Antes de ligar, avalie com a cliente o aviso de cookies exigido pela LGPD.
+
+## Páginas futuras (serviço e cidade)
+
+`src/routes.js` já tem `buildServiceCityRoutes()` (ex.: `/harmonizacao-facial-lauro-de-freitas`), ainda sem uso. Para ativar: acrescente as rotas em `routes`, crie o componente da página (com texto próprio) e trate o caminho em `src/entry-server.jsx` e `src/main.jsx`. Sitemap e prerender já leem `routes`.
 
 ## Atualizar conteúdo e imagens
 

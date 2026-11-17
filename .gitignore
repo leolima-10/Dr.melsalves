@@ -3,3 +3,6 @@ dist/
 .vite/
 .playwright-cli/
 .impeccable/
+.ssr/
+.env
+.env.local

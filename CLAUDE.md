@@ -10,7 +10,8 @@ Single-page marketing site (pt-BR) for Dra. Mel Salves (biomédica esteta): Reac
 
 - `npm install`
 - `npm run dev` — Vite dev server
-- `npm run build` — production bundle to `dist/`
+- `npm run build` — client bundle + SSR bundle + `build/prerender.js`: writes fully rendered HTML to `dist/` (static site generation; no framework)
+- `npm run build:client` — client bundle only (no prerender)
 - `npm run preview` — serve the built site
 
 There is no test script. `npm run build` does NOT catch undefined identifiers (they fail at runtime): open the page and check the console after edits.
@@ -22,10 +23,13 @@ Content-driven and centralized. Everything the client must confirm lives in ONE 
 - `src/config/site.js` — single source of truth, plain JS (also read at build time by `build/seo.js`, so no JSX/browser APIs). Holds: `SITE_URL`, `PROFESSIONAL` (honorific, profession, hero credentials, registration/education/experience), derived `DISPLAY_NAME`/`SHORT_NAME`, feature flags (`SHOW_CREDENTIALS`, `SHOW_TESTIMONIALS`, `SHOW_RHINOMODELING`, `SHOW_IDENTITY_PORTRAITS`), contacts, `SERVICE_AREAS` (4 cities; address/hours/mapUrl optional), `VALUES`, `TESTIMONIALS`, `SEO`, and `getWhatsAppLink(context, { service })`.
 - `src/data/services.js` — the services, grouped Face/Pele/Corpo; `slug` is the base for future per-service pages.
 - `src/data/cases.js` — before/after cases; `visible: false` hides a case (and its filter chip). Ids, paths and alt text must match files in `public/img/resultados/`.
-- `src/App.jsx` — nav, hero, about, gallery, care path, FAQ, contact, footer, floating WhatsApp. Animation uses `motion` (`motion/react`), GSAP (`useGSAP`) and Lenis; all must respect `useReducedMotion`.
+- `src/App.jsx` — nav, hero, about, gallery, care path, FAQ, contact, footer, floating WhatsApp. Animation uses `motion` (`motion/react`) for section reveals and Lenis for smooth scroll; the hero entrance is pure CSS (`hero-*` keyframes). Everything must respect reduced motion.
 - `src/components/common.jsx` — shared `WhatsAppLink` (the only place that builds WhatsApp anchors), `SectionReveal`, icons. `src/components/Sections.jsx` — procedures, values, area cards, testimonials, Instagram band, teaching band. `BeforeAfterSlider.jsx` — draggable/keyboard slider; renders a placeholder when images are missing (preserve this).
-- `build/seo.js` — Vite plugin that injects title/description/canonical/Open Graph/Twitter into `index.html` (marker `<!--seo-head-->`) from `src/config/site.js`.
-- `src/styles.css` — Tailwind `@theme` tokens (cream, champagne, honey, espresso, rose-nude; Cormorant Garamond display / DM Sans body) plus custom CSS.
+- `src/entry-server.jsx` + `build/prerender.js` — SSG: the page is rendered to HTML at build and hydrated by `src/main.jsx` (`hydrateRoot`). Server and client output must match: no `window`/`Date`/random values during render; keep `SectionReveal` `initial` constant.
+- `src/lib/analytics.js` — GA4 and Meta Pixel, loaded only if `VITE_GA4_ID` / `VITE_META_PIXEL_ID` are set (see `.env.example`); `WhatsAppLink` fires `whatsapp_click` with `origem` and `servico`.
+- `src/routes.js` — route list used by prerender and sitemap (only `/` today) plus unused generators for future service/city pages.
+- `build/seo.js` — Vite plugin that injects title/description/canonical/Open Graph/Twitter into `index.html` (marker `<!--seo-head-->`) from `src/config/site.js`, plus JSON-LD, `sitemap.xml`, `robots.txt` and `site.webmanifest`.
+- `src/styles.css` — Tailwind `@theme` tokens (cream, champagne, honey, espresso, rose-nude; Cormorant Garamond display / DM Sans body) plus custom CSS. Fonts are self-hosted in `public/fonts/` (variable woff2, latin subset).
 - `public/` holds static assets referenced root-relative (`/img/...`); `imagens/` holds raw source images, not served.
 
 ## Conventions
