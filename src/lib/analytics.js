@@ -17,7 +17,7 @@ function loadScript(src) {
 function startGa4(id) {
   window.dataLayer = window.dataLayer || [];
   window.gtag = function gtag() {
-    window.dataLayer.push(arguments); // eslint-disable-line prefer-rest-params
+    window.dataLayer.push(arguments);  
   };
   window.gtag('js', new Date());
   window.gtag('config', id);
@@ -27,8 +27,8 @@ function startGa4(id) {
 function startMetaPixel(id) {
   if (window.fbq) return;
   const fbq = function fbq() {
-    if (fbq.callMethod) fbq.callMethod.apply(fbq, arguments); // eslint-disable-line prefer-rest-params
-    else fbq.queue.push(arguments); // eslint-disable-line prefer-rest-params
+    if (fbq.callMethod) fbq.callMethod.apply(fbq, arguments);  
+    else fbq.queue.push(arguments);  
   };
   fbq.queue = [];
   fbq.loaded = true;
