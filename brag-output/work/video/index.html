@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<title>brag stage</title>
+<style>
+  html, body { margin: 0; width: 1920px; height: 1080px; overflow: hidden; background: #2a1d14; }
+  #stage { position: relative; width: 1920px; height: 1080px; overflow: hidden; background: #2a1d14; }
+  .v-scene { position: absolute; inset: 0; opacity: 0; }
+
+  /* Scene 1: real desktop hero */
+  #s1 { background: #2a1d14; z-index: 3; }
+  #deskWrap { position: absolute; left: 0; top: 0; width: 1536px; height: 864px; transform-origin: 50% 50%; overflow: hidden; }
+  #desk { width: 1536px; height: 864px; border: 0; display: block; }
+
+  /* Scenes 2-3: sand stage, phone, captions */
+  #s23 { background: #f4eadb; z-index: 2; }
+  .v-favo { position: absolute; pointer-events: none; }
+  .v-favo svg { display: block; width: 100%; height: auto; }
+  .v-caption { position: absolute; left: 150px; top: 0; width: 780px; height: 1080px; display: flex; flex-direction: column; justify-content: center; }
+  .v-cap { position: absolute; left: 0; width: 780px; }
+  .v-kicker { margin: 0 0 22px; color: #8a5f1f; font-family: var(--font-display); font-size: 40px; font-style: italic; font-weight: 500; }
+  .v-h2 { margin: 0; color: #2a1d14; font-family: var(--font-display); font-size: 96px; font-weight: 500; letter-spacing: -0.025em; line-height: 0.98; }
+  .v-h2 .v-line { display: block; }
+  .v-sub { margin: 30px 0 0; color: #5e4d3d; font-family: var(--font-body); font-size: 30px; line-height: 1.45; }
+  .v-rule { width: 72px; height: 2px; margin: 0 0 30px; background: #c9973f; transform-origin: 0 50%; }
+
+  .v-phone { position: absolute; left: 1067px; top: 72px; width: 445.2px; height: 935.5px; box-sizing: border-box; padding: 12px; border-radius: 66px; background: #1d1712; box-shadow: 0 50px 90px -30px rgba(42, 29, 20, 0.45), 0 0 0 1px rgba(201, 151, 63, 0.35) inset; }
+  .v-screen { position: relative; width: 421.2px; height: 911.5px; overflow: hidden; border-radius: 54px; background: #fbf6ee; }
+  #mob { width: 390px; height: 844px; border: 0; display: block; transform: scale(1.08); transform-origin: 0 0; }
+
+  .v-finger { position: absolute; left: 0; top: 0; width: 84px; height: 84px; margin: -42px 0 0 -42px; box-sizing: border-box; border-radius: 50%; background: rgba(42, 29, 20, 0.16); border: 3px solid #fff; box-shadow: 0 0 0 1px rgba(42, 29, 20, 0.3), 0 10px 26px rgba(42, 29, 20, 0.32); opacity: 0; z-index: 8; }
+  .v-ripple { position: absolute; left: 0; top: 0; width: 84px; height: 84px; margin: -42px 0 0 -42px; border-radius: 50%; border: 2px solid rgba(201, 151, 63, 0.9); opacity: 0; z-index: 7; }
+
+  .v-msg { position: absolute; left: 1446px; top: 560px; width: 400px; box-sizing: border-box; padding: 22px 24px 24px; border-radius: 26px; background: #fffdfa; box-shadow: 0 30px 70px -24px rgba(42, 29, 20, 0.45), 0 0 0 1px rgba(42, 29, 20, 0.08); opacity: 0; z-index: 9; font-family: var(--font-body); }
+  .v-msg__head { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+  .v-msg__icon { display: grid; width: 44px; height: 44px; place-items: center; border-radius: 50%; background: #236d4b; color: #fff; }
+  .v-msg__icon svg { width: 25px; height: 25px; }
+  .v-msg__title { color: #2a1d14; font-size: 19px; font-weight: 700; line-height: 1.2; }
+  .v-msg__meta { color: #68594c; font-size: 15px; }
+  .v-bubble { position: relative; padding: 16px 18px; border-radius: 18px 18px 4px 18px; background: #e3f1e8; color: #1d1712; font-size: 22px; line-height: 1.42; }
+  .v-send { display: flex; justify-content: flex-end; margin-top: 14px; }
+  .v-send span { display: inline-flex; align-items: center; gap: 8px; padding: 9px 16px; border-radius: 999px; background: #236d4b; color: #fff; font-size: 16px; font-weight: 700; }
+
+  /* Scene 4: outro */
+  #s4 { background: #2a1d14; z-index: 4; }
+  .v-out { position: absolute; left: 0; right: 0; top: 0; bottom: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+  .v-logo { display: flex; align-items: center; gap: 26px; color: #fbf6ee; }
+  .v-logo svg { width: 104px; height: 120px; overflow: visible; }
+  .v-logo__name { font-family: var(--font-display); font-size: 132px; font-weight: 400; letter-spacing: -0.01em; line-height: 1; }
+  .v-logo__name em { font-style: italic; }
+  .v-phrase { max-width: 1100px; margin: 54px 0 0; color: #f0e9df; font-family: var(--font-display); font-size: 54px; font-weight: 500; line-height: 1.16; }
+  .v-phrase em { color: #e5c27e; font-style: italic; }
+  .v-url { display: flex; align-items: center; gap: 20px; margin-top: 56px; color: #e5c27e; font-family: var(--font-body); font-size: 26px; font-weight: 600; letter-spacing: 0.1em; }
+  .v-url i { display: block; width: 56px; height: 1px; background: rgba(229, 194, 126, 0.6); }
+</style>
+</head>
+<body>
+<div id="stage">
+  <section class="v-scene" id="s1">
+    <div id="deskWrap"><iframe id="desk" src="/" title="desk"></iframe></div>
+  </section>
+
+  <section class="v-scene" id="s23">
+    <div class="v-favo" id="favoR"></div>
+    <div class="v-favo" id="favoL"></div>
+    <div class="v-caption">
+      <div class="v-cap" id="capA">
+        <div class="v-rule"></div>
+        <p class="v-kicker">Página única</p>
+        <h2 class="v-h2"><span class="v-line">Pensado para quem</span><span class="v-line">chega pelo Instagram.</span></h2>
+      </div>
+      <div class="v-cap" id="capB">
+        <div class="v-rule"></div>
+        <h2 class="v-h2"><span class="v-line">Resultados</span><span class="v-line">para comparar.</span></h2>
+        <p class="v-sub">Arraste os pares interativos.</p>
+      </div>
+      <div class="v-cap" id="capC">
+        <div class="v-rule"></div>
+        <h2 class="v-h2"><span class="v-line">Cada procedimento</span><span class="v-line">abre a conversa certa.</span></h2>
+        <p class="v-sub">Mensagem pronta no WhatsApp.</p>
+      </div>
+    </div>
+    <div class="v-phone" id="phone"><div class="v-screen"><iframe id="mob" src="/" title="mob"></iframe></div></div>
+    <div class="v-ripple" id="ripple"></div>
+    <div class="v-finger" id="finger"></div>
+    <div class="v-msg" id="msg">
+      <div class="v-msg__head">
+        <span class="v-msg__icon" id="msgIcon"></span>
+        <span><span class="v-msg__title">WhatsApp</span><br /><span class="v-msg__meta" id="msgMeta"></span></span>
+      </div>
+      <div class="v-bubble" id="bubble"></div>
+      <div class="v-send"><span>Enviar ➝</span></div>
+    </div>
+  </section>
+
+  <section class="v-scene" id="s4">
+    <div class="v-favo" id="favoDL"></div>
+    <div class="v-favo" id="favoDR"></div>
+    <div class="v-out">
+      <div class="v-logo" id="logo"></div>
+      <p class="v-phrase" id="phrase"></p>
+      <p class="v-url" id="url"></p>
+    </div>
+  </section>
+</div>
+<script type="module" src="./stage.js"></script>
+</body>
+</html>
