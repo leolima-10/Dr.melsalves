@@ -128,6 +128,44 @@ export function InstagramCard({ className = '' }) {
   );
 }
 
+// Botões sociais do rodapé (estilo Uiverse): círculo só com o ícone que expande em pílula
+// com o nome no hover/foco (.social-btn*). Em toque já aparecem expandidos.
+export function FooterInstagramButton() {
+  return (
+    <a
+      className="social-btn social-btn--instagram"
+      href={INSTAGRAM.url}
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label={`Instagram de ${DISPLAY_NAME} (@${INSTAGRAM.handle})`}
+    >
+      <span className="social-btn__icon">
+        <InstagramIcon />
+      </span>
+      <span className="social-btn__text" aria-hidden="true">
+        Instagram
+      </span>
+    </a>
+  );
+}
+
+export function FooterWhatsAppButton() {
+  return (
+    <WhatsAppLink
+      context="footer"
+      className="social-btn social-btn--whatsapp"
+      label={`Conversar com ${DISPLAY_NAME} pelo WhatsApp`}
+    >
+      <span className="social-btn__icon">
+        <WhatsAppIcon />
+      </span>
+      <span className="social-btn__text" aria-hidden="true">
+        WhatsApp
+      </span>
+    </WhatsAppLink>
+  );
+}
+
 /**
  * Único ponto de criação de links de WhatsApp.
  * `context` = origem do clique (hero, header, gallery...); `service` = nome do serviço (opcional).
