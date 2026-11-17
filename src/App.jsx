@@ -231,6 +231,7 @@ function Header() {
 function Hero() {
   const shouldReduceMotion = useReducedMotion();
   const heroRef = useRef(null);
+  const [imageOk, setImageOk] = useState(true);
 
   useGSAP(
     () => {
@@ -242,16 +243,12 @@ function Hero() {
       });
 
       timeline
-        .from('.hero__copy > *', {
-          autoAlpha: 0,
-          y: 16,
-          duration: 0.6,
-          stagger: 0.08,
-        })
+        .from('.hero__media img', { scale: 1.06, duration: 1.8, ease: 'power2.out' }, 0)
+        .from('.hero__frame', { autoAlpha: 0, duration: 0.8 }, 0.1)
         .from(
-          '.hero__portrait-wrap',
-          { autoAlpha: 0, y: 12, duration: 0.75 },
-          '-=0.42',
+          '.hero__frame > *:not(.hero__mini-mark)',
+          { autoAlpha: 0, y: 14, duration: 0.6, stagger: 0.09 },
+          0.3,
         )
         .from(
           '.hero__credentials span',
@@ -265,7 +262,7 @@ function Hero() {
           strokeDasharray: pathLength,
           strokeDashoffset: pathLength,
         });
-        timeline.to(markPath, { strokeDashoffset: 0, duration: 0.9 }, 0.65);
+        timeline.to(markPath, { strokeDashoffset: 0, duration: 0.9 }, 0.4);
       }
     },
     { scope: heroRef, dependencies: [shouldReduceMotion], revertOnUpdate: true },
@@ -273,12 +270,26 @@ function Hero() {
 
   return (
     <section ref={heroRef} className="hero" id="inicio" aria-labelledby="hero-title">
+      {imageOk && (
+        <div className="hero__media" aria-hidden="true">
+          <img
+            src="/img/hero-identidade.webp"
+            alt=""
+            fetchPriority="high"
+            decoding="async"
+            onError={() => setImageOk(false)}
+          />
+        </div>
+      )}
       <div className="hero__inner page-width">
-        <div className="hero__copy">
-          <p className="hero__welcome">Harmonização facial & estética avançada</p>
-          <h1 id="hero-title">Harmonização facial com naturalidade e equilíbrio.</h1>
+        <div className="hero__frame">
+          <HoneycombMark className="hero__mini-mark" />
+          <p className="hero__welcome">Harmonização facial &amp; estética avançada</p>
+          <h1 id="hero-title">
+            Seu rosto é sua <em>identidade.</em>
+          </h1>
           <p className="hero__description">
-            Avaliação individual e planejamento personalizado para realçar a sua beleza.
+            É o que chega antes da sua voz, do seu nome, da sua história.
           </p>
           <div className="hero__actions">
             <WhatsAppLink context="general" className="button button--gold">
@@ -291,32 +302,53 @@ function Hero() {
             </a>
           </div>
         </div>
-        <div className="hero__portrait-wrap">
-          <div className="hero__portrait-frame">
-            <img
-              className="hero__portrait"
-              src="/img/dra-mel.webp"
-              alt="Dra. Mel Salves em seu espaço de atendimento."
-              fetchPriority="high"
-              decoding="async"
-            />
-          </div>
-          <div className="hero__portrait-note">
-            <HoneycombMark className="hero__mini-mark" />
-            <span>Dra. Mel<br />Salves</span>
-          </div>
-        </div>
-        <div
-          className="hero__credentials"
-          aria-label="Atuação profissional"
-        >
+        <div className="hero__credentials" aria-label="Atuação profissional">
           <span>Especialista em Harmonização Facial</span>
           <span>Expert em Preenchimento Labial</span>
           <span>Professora na Rede Pro Cursos</span>
         </div>
       </div>
-      <span className="hero__ornament" aria-hidden="true" />
     </section>
+  );
+}
+
+const identityPortraits = [
+  '/img/identidade/retrato-01.webp',
+  '/img/identidade/retrato-02.webp',
+  '/img/identidade/retrato-03.webp',
+  '/img/identidade/retrato-04.webp',
+];
+
+function IdentityPortrait({ src }) {
+  const [ok, setOk] = useState(true);
+
+  return (
+    <div className="identity__shot">
+      {ok && <img src={src} alt="" loading="lazy" decoding="async" onError={() => setOk(false)} />}
+    </div>
+  );
+}
+
+function Identity() {
+  return (
+    <SectionReveal className="section identity-section" id="cuidado" aria-labelledby="identity-title">
+      <div className="page-width">
+        <h2 id="identity-title" className="identity__title">
+          cuidado <span>{'{individual}'}</span>
+          <br />
+          em cada rosto
+        </h2>
+        <div className="identity__strip">
+          {identityPortraits.map((src) => (
+            <IdentityPortrait key={src} src={src} />
+          ))}
+        </div>
+        <p className="identity__text">
+          Cada pessoa tem uma história própria. O cuidado começa pela <strong><em>escuta</em></strong>{' '}
+          e pela avaliação individual.
+        </p>
+      </div>
+    </SectionReveal>
   );
 }
 
@@ -668,6 +700,7 @@ export default function App() {
       <main id="conteudo">
         <Hero />
         <About />
+        <Identity />
         <Procedures />
         <ResultGallery />
         <CarePath />
