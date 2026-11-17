@@ -14,6 +14,8 @@ import {
 } from './lib/gsap.js';
 import {
   BrandLogo,
+  FooterInstagramButton,
+  FooterWhatsAppButton,
   InstagramCard,
   SectionReveal,
   WhatsAppIcon,
@@ -33,7 +35,6 @@ import {
   DISPLAY_NAME,
   HERO_IMAGE,
   IDENTITY_PORTRAITS,
-  INSTAGRAM,
   PROFESSIONAL,
   SHORT_NAME,
   SHOW_CREDENTIALS,
@@ -611,10 +612,8 @@ function Footer() {
           <p className="footer-registration">{PROFESSIONAL.registration}</p>
         )}
         <div className="footer-links">
-          <a href={INSTAGRAM.url} target="_blank" rel="noopener noreferrer">
-            Instagram
-          </a>
-          <WhatsAppLink context="footer">WhatsApp</WhatsAppLink>
+          <FooterInstagramButton />
+          <FooterWhatsAppButton />
         </div>
       </div>
       <div className="page-width site-footer__bottom">
