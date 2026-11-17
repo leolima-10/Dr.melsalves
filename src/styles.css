@@ -565,7 +565,7 @@ img {
   border-top: 1px solid rgba(42, 29, 20, 0.34);
 }
 
-.procedure-item h3 {
+.procedure-item h4 {
   margin: 0;
   font-family: var(--font-display);
   font-size: clamp(1.75rem, 2.6vw, 2.35rem);
@@ -1657,3 +1657,276 @@ img {
     font-size: 0.72rem;
   }
 
+
+/* ---------- Procedimentos agrupados (Face, Pele, Corpo) ---------- */
+.procedure-group {
+  margin-top: clamp(46px, 6vw, 78px);
+}
+
+.procedure-group__title {
+  margin: 0;
+  color: #684715;
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.procedure-group .procedure-list {
+  margin-top: 14px;
+}
+
+/* ---------- Valores da marca ---------- */
+.values-section {
+  background: var(--paper);
+}
+
+.values-signature {
+  max-width: 760px;
+  margin-inline: auto;
+  text-align: center;
+}
+
+.values-signature .section-kicker {
+  margin-bottom: 12px;
+  color: #865a1d;
+}
+
+.values-signature h2 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(3rem, 6.4vw, 5.4rem);
+  font-style: italic;
+  font-weight: 500;
+  letter-spacing: -0.025em;
+  line-height: 0.98;
+}
+
+.values-phrase {
+  margin: 20px 0 0;
+  font-family: var(--font-display);
+  font-size: clamp(1.3rem, 2.4vw, 1.75rem);
+  line-height: 1.3;
+  text-wrap: balance;
+}
+
+.values-list {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 28px;
+  margin: clamp(44px, 6vw, 72px) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.value-item {
+  padding-top: 24px;
+  border-top: 1px solid rgba(42, 29, 20, 0.34);
+}
+
+.value-item__icon {
+  width: 38px;
+  height: 38px;
+  margin-bottom: 18px;
+  fill: none;
+  stroke: #684715;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.4;
+}
+
+.value-item h3 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  font-weight: 600;
+  line-height: 1.1;
+}
+
+.value-item p {
+  margin: 10px 0 0;
+  color: var(--muted);
+  line-height: 1.65;
+  text-wrap: pretty;
+}
+
+/* ---------- Locais de atendimento ---------- */
+.area-list {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 20px;
+  margin: clamp(36px, 5vw, 56px) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.area-item {
+  padding: 22px 18px 20px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: var(--paper);
+}
+
+.area-item h3 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  font-weight: 600;
+  line-height: 1.1;
+}
+
+.area-item p {
+  margin: 10px 0 0;
+  color: var(--muted);
+  font-size: 0.92rem;
+  line-height: 1.6;
+}
+
+.area-item a {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  margin-top: 8px;
+  color: #684715;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.care-steps-title {
+  margin: clamp(52px, 7vw, 84px) 0 0;
+  font-family: var(--font-display);
+  font-size: clamp(1.8rem, 3vw, 2.4rem);
+  font-weight: 500;
+  text-align: center;
+}
+
+.care-steps-title + .care-steps {
+  margin-top: 32px;
+}
+
+/* ---------- Depoimentos ---------- */
+.testimonials-section {
+  background: var(--paper);
+}
+
+.testimonial-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 24px;
+  margin: clamp(36px, 5vw, 56px) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.testimonial-card {
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 22px;
+  margin: 0;
+  padding: 28px 24px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: var(--cream);
+}
+
+.testimonial-card blockquote {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  line-height: 1.4;
+}
+
+.testimonial-card figcaption {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 0.9rem;
+}
+
+.testimonial-card figcaption span {
+  color: var(--muted);
+}
+
+.testimonial-note {
+  max-width: 62ch;
+  margin: 28px auto 0;
+  color: var(--muted);
+  font-size: 0.82rem;
+  line-height: 1.6;
+  text-align: center;
+}
+
+/* ---------- Instagram em destaque ---------- */
+.instagram-band {
+  padding: clamp(46px, 7vw, 84px) 0;
+  background: var(--champagne);
+}
+
+.instagram-band__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 32px;
+}
+
+.instagram-band .section-kicker {
+  margin-bottom: 12px;
+  color: #684715;
+}
+
+.instagram-band h2 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(2.2rem, 4vw, 3.4rem);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+
+.instagram-band p:last-child {
+  max-width: 46ch;
+  margin: 14px 0 0;
+  color: #4a3a2d;
+  line-height: 1.65;
+}
+
+.teaching-band__text {
+  max-width: 52ch;
+  margin: 14px 0 0;
+  color: #4a3a2d;
+  line-height: 1.65;
+}
+
+@media (max-width: 1020px) {
+  .area-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 760px) {
+  .values-list {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 22px;
+  }
+
+  .area-list {
+    gap: 12px;
+  }
+
+  .area-item {
+    padding: 18px 14px 14px;
+  }
+
+  .area-item h3 {
+    font-size: 1.35rem;
+  }
+
+  .instagram-band__inner {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 24px;
+  }
+}

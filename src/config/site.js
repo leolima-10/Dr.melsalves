@@ -47,6 +47,15 @@ export const BRAND_SIGNATURE = 'Beleza natural';
 export const SHOW_CREDENTIALS = false; // caixa Formação/Registro/Experiência + registro no rodapé
 export const SHOW_TESTIMONIALS = false; // só com depoimentos reais e autorizados
 export const SHOW_RHINOMODELING = false; // card de rinomodelação (cliente precisa confirmar)
+// Faixa de retratos da seção "cuidado individual". Os arquivos abaixo ainda não existem em
+// public/img/identidade/: ligue a flag só depois de adicioná-los (e ter autorização de uso).
+export const SHOW_IDENTITY_PORTRAITS = false;
+export const IDENTITY_PORTRAITS = [
+  '/img/identidade/retrato-01.webp',
+  '/img/identidade/retrato-02.webp',
+  '/img/identidade/retrato-03.webp',
+  '/img/identidade/retrato-04.webp',
+];
 
 // --- Contas e links ----------------------------------------------------
 export const WHATSAPP_PHONE = '5571983591398';
@@ -59,7 +68,7 @@ export const REDE_PRO_CURSOS = {
   url: 'https://www.instagram.com/redeprocursos/',
   // PENDENTE: confirmar com a cliente o que a Rede Pro Cursos ensina.
   description:
-    'Espaço de ensino em que a Dra. Mel atua como professora. É um projeto de formação, não um canal de atendimento a pacientes.',
+    `Espaço de ensino em que a ${SHORT_NAME} atua como professora. É um projeto de formação, não um canal de atendimento a pacientes.`,
 };
 
 // --- Locais de atendimento --------------------------------------------

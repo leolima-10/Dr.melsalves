@@ -1,19 +1,33 @@
 import { useEffect, useRef, useState } from 'react';
-import { motion, useReducedMotion } from 'motion/react';
+import { useReducedMotion } from 'motion/react';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import Lenis from 'lenis';
 import BeforeAfterSlider, { ComparisonBoard } from './components/BeforeAfterSlider.jsx';
+import {
+  HoneycombMark,
+  InstagramIcon,
+  SectionReveal,
+  WhatsAppIcon,
+  WhatsAppLink,
+} from './components/common.jsx';
+import {
+  AreaCards,
+  InstagramBlock,
+  Procedures,
+  TeachingBand,
+  Testimonials,
+  Values,
+} from './components/Sections.jsx';
 import { cases } from './data/cases.js';
 import {
   DISPLAY_NAME,
-  getWhatsAppLink,
+  IDENTITY_PORTRAITS,
   INSTAGRAM,
   PROFESSIONAL,
-  REDE_PRO_CURSOS,
   SHORT_NAME,
   SHOW_CREDENTIALS,
-  SHOW_TESTIMONIALS,
+  SHOW_IDENTITY_PORTRAITS,
   SITE_URL,
   WHATSAPP_PHONE,
 } from './config/site.js';
@@ -27,27 +41,6 @@ const navItems = [
   { href: '#atendimento', label: 'Atendimento' },
   { href: '#faq', label: 'FAQ' },
   { href: '#contato', label: 'Contato' },
-];
-
-const procedures = [
-  {
-    title: 'Harmonização facial',
-    description:
-      'Planejamento individual para buscar equilíbrio entre os traços, respeitando a expressão de cada pessoa.',
-    context: 'harmonization',
-  },
-  {
-    title: 'Preenchimento labial',
-    description:
-      'Uma abordagem personalizada para valorizar os lábios de forma compatível com o conjunto do rosto.',
-    context: 'lip',
-  },
-  {
-    title: 'Estética avançada',
-    description:
-      'Atendimento orientado por avaliação individual e pelas necessidades de cada pessoa.',
-    context: 'general',
-  },
 ];
 
 const steps = [
@@ -69,17 +62,17 @@ const steps = [
   },
 ];
 
-// REVISAR COM A DRA.: respostas informativas, sem promessa de resultado.
+// REVISAR COM A CLIENTE: respostas informativas, sem promessa de resultado.
 const faqs = [
   {
     question: 'Como funciona a primeira avaliação?',
     answer:
-      'É um momento para conversar sobre suas expectativas, conhecer seu histórico e avaliar suas necessidades. A indicação é individual.',
+      'É uma conversa para entender o que você deseja, conhecer seu histórico e avaliar o que faz sentido para o seu caso. Só depois dessa avaliação é discutida a indicação, que é individual.',
   },
   {
-    question: 'O resultado fica natural?',
+    question: 'Como é buscada a beleza natural?',
     answer:
-      'Cada pessoa tem características e expectativas próprias. A avaliação ajuda a conversar sobre possibilidades e limites para o seu caso, sem garantir um resultado específico.',
+      'A proposta é respeitar suas características e a sua expressão, com um plano individual conversado antes de qualquer decisão. Os resultados variam de pessoa para pessoa e não é possível garantir um resultado específico.',
   },
   {
     question: 'Quais cuidados são necessários depois?',
@@ -92,88 +85,16 @@ const faqs = [
       'A indicação depende de avaliação individual, histórico e expectativas. Nem todo procedimento é adequado para todas as pessoas.',
   },
   {
+    question: 'Em quais cidades é feito o atendimento?',
+    answer:
+      'Em Lauro de Freitas, Salvador, Praia do Forte e Barra do Pojuca. Para combinar local e horário, fale pelo WhatsApp.',
+  },
+  {
     question: 'Como faço para agendar?',
     answer:
       `Toque em um dos botões de WhatsApp desta página para iniciar uma conversa com a ${SHORT_NAME} e solicitar uma avaliação.`,
   },
 ];
-
-function HoneycombMark({ className = '' }) {
-  return (
-    <svg
-      className={className}
-      viewBox="0 0 48 48"
-      role="img"
-      aria-label="Monograma MS em um hexágono"
-    >
-      <path d="M24 2.8 43 13.4v21.2L24 45.2 5 34.6V13.4z" />
-      <text
-        x="24"
-        y="27"
-        fill="currentColor"
-        stroke="none"
-        textAnchor="middle"
-        fontFamily="Cormorant Garamond, Georgia, serif"
-        fontSize="13"
-        fontWeight="600"
-      >
-        MS
-      </text>
-    </svg>
-  );
-}
-
-function WhatsAppIcon() {
-  return (
-    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-      <path
-        d="M12.04 2a9.9 9.9 0 0 0-8.48 15.02L2 22l5.12-1.34A9.93 9.93 0 1 0 12.04 2Zm0 18.06c-1.47 0-2.91-.39-4.18-1.13l-.3-.18-3.04.8.81-2.96-.19-.31A8.14 8.14 0 1 1 12.04 20.06Zm4.47-6.1c-.25-.13-1.47-.73-1.7-.81-.23-.08-.4-.13-.57.13-.17.25-.65.81-.8.98-.15.17-.3.19-.55.06-.25-.13-1.06-.39-2.02-1.24-.75-.67-1.25-1.5-1.4-1.75-.15-.25-.02-.39.11-.52.11-.11.25-.3.37-.44.12-.15.16-.25.25-.42.08-.17.04-.31-.02-.44-.07-.13-.57-1.37-.78-1.88-.2-.49-.41-.42-.57-.43h-.49c-.17 0-.44.06-.67.31-.23.25-.88.86-.88 2.1s.9 2.43 1.03 2.6c.13.17 1.77 2.7 4.29 3.79.6.26 1.07.41 1.43.53.6.19 1.14.16 1.57.1.48-.07 1.47-.6 1.68-1.19.21-.59.21-1.1.15-1.2-.06-.1-.23-.16-.48-.29Z"
-        fill="currentColor"
-      />
-    </svg>
-  );
-}
-
-function InstagramIcon() {
-  return (
-    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-      <rect x="3" y="3" width="18" height="18" rx="5" fill="none" stroke="currentColor" strokeWidth="1.8" />
-      <circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" strokeWidth="1.8" />
-      <circle cx="17.5" cy="6.8" r="1.1" fill="currentColor" />
-    </svg>
-  );
-}
-
-function WhatsAppLink({ context, className = '', children, label }) {
-  return (
-    <a
-      className={className}
-      href={getWhatsAppLink(context)}
-      target="_blank"
-      rel="noopener noreferrer"
-      aria-label={label}
-    >
-      {children}
-    </a>
-  );
-}
-
-function SectionReveal({ className, children, ...props }) {
-  const shouldReduceMotion = useReducedMotion();
-
-  return (
-    <motion.section
-      className={className}
-      initial={shouldReduceMotion ? false : { opacity: 0 }}
-      whileInView={shouldReduceMotion ? undefined : { opacity: 1 }}
-      viewport={{ once: true, amount: 0.16 }}
-      transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
-      {...props}
-    >
-      {children}
-    </motion.section>
-  );
-}
 
 function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -225,7 +146,7 @@ function Header() {
               {item.label}
             </a>
           ))}
-          <WhatsAppLink context="general" className="button button--small button--gold">
+          <WhatsAppLink context="header" className="button button--small button--gold">
             Agendar avaliação
           </WhatsAppLink>
         </nav>
@@ -298,7 +219,7 @@ function Hero() {
             É o que chega antes da sua voz, do seu nome, da sua história.
           </p>
           <div className="hero__actions">
-            <WhatsAppLink context="general" className="button button--gold">
+            <WhatsAppLink context="hero" className="button button--gold">
               <WhatsAppIcon />
               Agendar avaliação no WhatsApp
             </WhatsAppLink>
@@ -317,13 +238,6 @@ function Hero() {
     </section>
   );
 }
-
-const identityPortraits = [
-  '/img/identidade/retrato-01.webp',
-  '/img/identidade/retrato-02.webp',
-  '/img/identidade/retrato-03.webp',
-  '/img/identidade/retrato-04.webp',
-];
 
 function IdentityPortrait({ src }) {
   const [ok, setOk] = useState(true);
@@ -344,11 +258,13 @@ function Identity() {
           <br />
           em cada rosto
         </h2>
-        <div className="identity__strip">
-          {identityPortraits.map((src) => (
-            <IdentityPortrait key={src} src={src} />
-          ))}
-        </div>
+        {SHOW_IDENTITY_PORTRAITS && IDENTITY_PORTRAITS.length > 0 && (
+          <div className="identity__strip">
+            {IDENTITY_PORTRAITS.map((src) => (
+              <IdentityPortrait key={src} src={src} />
+            ))}
+          </div>
+        )}
         <p className="identity__text">
           Cada pessoa tem uma história própria. O cuidado começa pela <strong><em>escuta</em></strong>{' '}
           e pela avaliação individual.
@@ -374,9 +290,14 @@ function About() {
         </div>
         <div className="about-copy">
           <p>
-            Sou a {DISPLAY_NAME}, {PROFESSIONAL.profession.toLowerCase()} e professora na Rede
-            Pro Cursos. Meu trabalho é guiado pela avaliação individual e por um planejamento
-            que respeita as características de cada pessoa.
+            Sou a {DISPLAY_NAME}, {PROFESSIONAL.profession.toLowerCase()}. Sou graduada em
+            Biomedicina e tenho especialização em estética avançada aplicada à saúde. Também sou
+            professora na Rede Pro Cursos.
+          </p>
+          <p>
+            Meu trabalho é guiado pela escuta, pela avaliação individual e por um planejamento
+            que respeita as características de cada pessoa, sempre buscando uma beleza natural,
+            com escolhas seguras.
           </p>
           {SHOW_CREDENTIALS && aboutFacts.length > 0 && (
             <div className="about-facts">
@@ -394,52 +315,17 @@ function About() {
   );
 }
 
-function Procedures() {
-  return (
-    <SectionReveal
-      className="section procedures-section"
-      id="procedimentos"
-      aria-labelledby="procedures-title"
-    >
-      <div className="page-width">
-        <div className="section-heading section-heading--center">
-          <p className="section-kicker">Caminhos possíveis</p>
-          <h2 id="procedures-title">Procedimentos</h2>
-          <p>As possibilidades são conversadas com cuidado, sempre a partir de uma avaliação.</p>
-        </div>
-        <div className="procedure-list">
-          {procedures.map((procedure) => (
-            <article className="procedure-item" key={procedure.title}>
-              <div>
-                <h3>{procedure.title}</h3>
-                <p>{procedure.description}</p>
-              </div>
-              <WhatsAppLink
-                context={procedure.context}
-                className="procedure-item__link"
-                label={`Conversar sobre ${procedure.title} no WhatsApp`}
-              >
-                Conversar
-                <span aria-hidden="true">↗</span>
-              </WhatsAppLink>
-            </article>
-          ))}
-        </div>
-      </div>
-    </SectionReveal>
-  );
-}
-
 function ResultGallery() {
   const [filter, setFilter] = useState('Todos');
-  const filters = [
-    'Todos',
-    'Preenchimento labial',
-    'Harmonização facial',
-    'Rinomodelação',
-  ];
+  // Casos com `visible: false` (autorização retirada) somem da galeria e dos filtros.
+  const publishedCases = cases.filter((item) => item.visible !== false);
+  const filters = ['Todos', ...new Set(publishedCases.map((item) => item.procedimento))];
   const visibleCases =
-    filter === 'Todos' ? cases : cases.filter((item) => item.procedimento === filter);
+    filter === 'Todos'
+      ? publishedCases
+      : publishedCases.filter((item) => item.procedimento === filter);
+
+  if (publishedCases.length === 0) return null;
 
   const changeFilter = (nextFilter) => {
     if (document.startViewTransition) {
@@ -457,7 +343,8 @@ function ResultGallery() {
             <p className="section-kicker">Um olhar para cada detalhe</p>
             <h2 id="results-title">Resultados para comparar.</h2>
             <p>
-              Arraste os pares interativos. Cada caso é único e depende de avaliação individual.
+              Arraste os pares interativos. Os resultados variam de pessoa para pessoa: cada caso
+              é único e depende de avaliação individual.
             </p>
           </div>
           <div className="filter-list" role="group" aria-label="Filtrar casos por procedimento">
@@ -514,10 +401,15 @@ function CarePath() {
     >
       <div className="page-width">
         <div className="section-heading section-heading--center">
-          <p className="section-kicker">Um passo de cada vez</p>
-          <h2 id="care-title">Como funciona o atendimento</h2>
-          <p>O cuidado é construído com diálogo, avaliação e acompanhamento.</p>
+          <p className="section-kicker">Onde atendo</p>
+          <h2 id="care-title">Atendimento em Lauro de Freitas e Salvador</h2>
+          <p>
+            Também em Praia do Forte e Barra do Pojuca. Fale pelo WhatsApp para combinar o local
+            e o horário.
+          </p>
         </div>
+        <AreaCards />
+        <h3 className="care-steps-title">Como funciona o atendimento</h3>
         <ol className="care-steps">
           {steps.map((step, index) => (
             <li className="care-step" key={step.title}>
@@ -527,36 +419,6 @@ function CarePath() {
             </li>
           ))}
         </ol>
-      </div>
-    </SectionReveal>
-  );
-}
-
-function Testimonials() {
-  if (!SHOW_TESTIMONIALS) return null;
-  return (
-    <SectionReveal className="section testimonials-section" aria-labelledby="testimonials-title">
-      <div className="page-width section-heading section-heading--center">
-        <p className="section-kicker">Experiências compartilhadas</p>
-        <h2 id="testimonials-title">Depoimentos</h2>
-        <p>Depoimentos reais serão incluídos após revisão e autorização.</p>
-      </div>
-    </SectionReveal>
-  );
-}
-
-function TeachingBand() {
-  return (
-    <SectionReveal className="teaching-band" aria-label="Atuação como professora">
-      <div className="page-width teaching-band__inner">
-        <div>
-          <p className="section-kicker">Compartilhando conhecimento</p>
-          <h2>Professora na Rede Pro Cursos</h2>
-        </div>
-        <a href={REDE_PRO_CURSOS.url} target="_blank" rel="noopener noreferrer">
-          Conheça a Rede Pro Cursos
-          <span aria-hidden="true">↗</span>
-        </a>
       </div>
     </SectionReveal>
   );
@@ -594,7 +456,7 @@ function Contact() {
           <p>Fale com a {SHORT_NAME} para conversar sobre suas expectativas.</p>
         </div>
         <div className="contact-panel__actions">
-          <WhatsAppLink context="general" className="button button--gold">
+          <WhatsAppLink context="contact" className="button button--gold">
             <WhatsAppIcon />
             Agendar pelo WhatsApp
           </WhatsAppLink>
@@ -706,11 +568,13 @@ export default function App() {
       <main id="conteudo">
         <Hero />
         <About />
+        <Values />
         <Identity />
         <Procedures />
         <ResultGallery />
         <CarePath />
         <Testimonials />
+        <InstagramBlock />
         <TeachingBand />
         <FAQ />
         <Contact />

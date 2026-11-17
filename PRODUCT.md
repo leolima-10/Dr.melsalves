@@ -29,16 +29,17 @@ Visitors may use an in-app mobile browser. Primary conversion is a contextual Wh
 ## Capabilities and Constraints
 
 - One responsive landing page with an accessible draggable comparison slider, result filters, mobile navigation, FAQ, and WhatsApp links.
-- No forms, trackers, cookies, or unsupported treatment claims.
-- Only Harmonização Facial, Preenchimento Labial, and Estética Avançada are confirmed services.
+- No forms, cookies, or unsupported treatment claims. Analytics (GA4 / Meta Pixel) exist only when their env vars are set; off by default.
+- Confirmed services (8): harmonização facial, preenchimento com ácido hialurônico (inclui labial), toxina botulínica, bioestimuladores de colágeno, microagulhamento, skinbooster, enzimas lipolíticas, intradermoterapia facial e corporal. Rinomodelação is not confirmed as a service (flag `SHOW_RHINOMODELING`).
 - Use React, Vite, and Tailwind CSS; deploy as a static site to Vercel.
-- Do not assume a city, address, hours, education, registration, years of experience, or patient testimonials.
+- Service areas: Lauro de Freitas, Salvador, Praia do Forte, Barra do Pojuca. Do not assume street addresses, hours, education, registration (CRBM), years of experience, or patient testimonials.
 - Respect keyboard interaction, touch target size, visible focus, and reduced-motion preferences.
 
 ## Brand Commitments
 
-- Name: Dra. Mel Salves.
-- Confirmed bio: specialist in Harmonização Facial, expert in Preenchimento Labial, and professor at Rede Pro Cursos.
+- Name: Dra. Mel Salves (Melissa Salves). The exact form of address (Dra., especialista, expert, biomédica esteta) is pending client confirmation and is set in `src/config/site.js`.
+- Bio on hand: biomédica esteta, graduated in Biomedicina with a specialization in advanced aesthetics applied to health; professor at Rede Pro Cursos.
+- Brand: "Beleza natural"; phrase "Sua melhor versão começa com escolhas seguras."; pillars: escuta ativa e acolhimento, protocolos personalizados, atualização constante.
 - Voice: elegant, welcoming, safe, natural, and concise in Brazilian Portuguese.
 - Visual direction approved for planning: warm honey/champagne palette, refined editorial typography, subtle honeycomb geometry, and understated motion.
 
