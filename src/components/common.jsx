@@ -1,6 +1,6 @@
 import { useId, useRef } from 'react';
 import { DESKTOP_MOTION, gsap, MOTION_OK, SplitText, useIsoLayoutEffect } from '../lib/gsap.js';
-import { DISPLAY_NAME, PROFESSIONAL, getWhatsAppLink } from '../config/site.js';
+import { DISPLAY_NAME, INSTAGRAM, PROFESSIONAL, getWhatsAppLink } from '../config/site.js';
 import { trackWhatsAppClick } from '../lib/analytics.js';
 
 // Logo "abelha traço fino" (Paper, logo-dramel, artboard 01): abelha em traço cor de mel
@@ -83,6 +83,48 @@ export function InstagramIcon() {
       <circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" strokeWidth="1.8" />
       <circle cx="17.5" cy="6.8" r="1.1" fill="currentColor" />
     </svg>
+  );
+}
+
+// Botão do Instagram: ícone em camadas que se abrem no hover + cartão de perfil (tooltip).
+// Só CSS (.ig-card*): o cartão aparece no hover/foco de ponteiro fino; no toque fica só o link.
+// O rótulo com o @ fica sempre visível. Sem número de seguidores (dado não confirmado).
+export function InstagramCard({ className = '' }) {
+  return (
+    <span className={`ig-card ${className}`.trim()}>
+      <span className="ig-card__tooltip" aria-hidden="true">
+        <span className="ig-card__profile">
+          <span className="ig-card__user">
+            <span className="ig-card__avatar">{PROFESSIONAL.firstName.charAt(0)}</span>
+            <span className="ig-card__details">
+              <span className="ig-card__name">{DISPLAY_NAME}</span>
+              <span className="ig-card__handle">@{INSTAGRAM.handle}</span>
+            </span>
+          </span>
+          <span className="ig-card__about">{PROFESSIONAL.profession}</span>
+        </span>
+      </span>
+      <a
+        className="ig-card__link"
+        href={INSTAGRAM.url}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label={`Instagram de ${DISPLAY_NAME} (@${INSTAGRAM.handle})`}
+      >
+        <span className="ig-card__layers" aria-hidden="true">
+          <span />
+          <span />
+          <span />
+          <span />
+          <span className="ig-card__glyph">
+            <InstagramIcon />
+          </span>
+        </span>
+        <span className="ig-card__label" aria-hidden="true">
+          @{INSTAGRAM.handle}
+        </span>
+      </a>
+    </span>
   );
 }
 

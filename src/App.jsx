@@ -14,7 +14,7 @@ import {
 } from './lib/gsap.js';
 import {
   BrandLogo,
-  InstagramIcon,
+  InstagramCard,
   SectionReveal,
   WhatsAppIcon,
   WhatsAppLink,
@@ -593,15 +593,7 @@ function Contact() {
             <WhatsAppIcon />
             Agendar pelo WhatsApp
           </WhatsAppLink>
-          <a
-            className="contact-instagram"
-            href={INSTAGRAM.url}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <InstagramIcon />
-            @{INSTAGRAM.handle}
-          </a>
+          <InstagramCard />
         </div>
       </div>
     </SectionReveal>

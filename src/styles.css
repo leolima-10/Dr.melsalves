@@ -292,11 +292,10 @@ img {
   line-height: 1.25;
   text-align: center;
   text-decoration: none;
-  transition: background-color 180ms ease, transform 180ms var(--ease-out);
+  transition: color 0.3s ease, border-color 0.3s ease, transform 180ms var(--ease-out);
 }
 
 .button:hover {
-  background: #d7aa5b;
   transform: translateY(-2px);
 }
 
@@ -319,10 +318,135 @@ img {
 .button--dark {
   background: var(--espresso);
   color: var(--paper);
+  --wave: var(--honey);
+  --wave-text: var(--espresso);
 }
 
-.button--dark:hover {
-  background: #493426;
+/* Animação "onda líquida" (Uiverse witty-turtle-52): duas elipses sobem de baixo no hover/foco e
+   preenchem o botão. A cor da onda (--wave) e a do texto (--wave-text) mudam por variante. */
+.button,
+.procedure-item__link,
+.floating-whatsapp {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  --wave: var(--espresso);
+  --wave-text: var(--paper);
+}
+
+.button--dark {
+  --wave: var(--honey);
+  --wave-text: var(--espresso);
+}
+
+.floating-whatsapp {
+  --wave: #143f2b;
+}
+
+.button::before,
+.button::after,
+.procedure-item__link::before,
+.procedure-item__link::after,
+.floating-whatsapp::before,
+.floating-whatsapp::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  display: block;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: -1;
+  transition: top 0.5s 0.1s cubic-bezier(0.55, 0, 0.1, 1), transform 0.5s 0.1s cubic-bezier(0.55, 0, 0.1, 1);
+}
+
+.button::before,
+.procedure-item__link::before,
+.floating-whatsapp::before {
+  top: 100%;
+  width: 140%;
+  height: 180%;
+  background-color: rgba(0, 0, 0, 0.08);
+  transform: translateX(-50%) scaleY(1) scaleX(1.25);
+}
+
+.button::after,
+.procedure-item__link::after,
+.floating-whatsapp::after {
+  left: 55%;
+  top: 180%;
+  width: 160%;
+  height: 190%;
+  background-color: var(--wave);
+  transform: translateX(-50%) scaleY(1) scaleX(1.45);
+}
+
+.button:focus-visible,
+.procedure-item__link:focus-visible,
+.floating-whatsapp:focus-visible {
+  color: var(--wave-text);
+}
+
+.button:focus-visible::before,
+.button:focus-visible::after,
+.procedure-item__link:focus-visible::before,
+.procedure-item__link:focus-visible::after,
+.floating-whatsapp:focus-visible::before,
+.floating-whatsapp:focus-visible::after {
+  transform: translateX(-50%) scaleY(1.3) scaleX(0.8);
+}
+
+.button:focus-visible::before,
+.procedure-item__link:focus-visible::before,
+.floating-whatsapp:focus-visible::before {
+  top: -35%;
+  background-color: var(--wave);
+}
+
+.button:focus-visible::after,
+.procedure-item__link:focus-visible::after,
+.floating-whatsapp:focus-visible::after {
+  top: -45%;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .button:hover,
+  .procedure-item__link:hover,
+  .floating-whatsapp:hover {
+    color: var(--wave-text);
+  }
+
+  .button:hover::before,
+  .button:hover::after,
+  .procedure-item__link:hover::before,
+  .procedure-item__link:hover::after,
+  .floating-whatsapp:hover::before,
+  .floating-whatsapp:hover::after {
+    transform: translateX(-50%) scaleY(1.3) scaleX(0.8);
+  }
+
+  .button:hover::before,
+  .procedure-item__link:hover::before,
+  .floating-whatsapp:hover::before {
+    top: -35%;
+    background-color: var(--wave);
+  }
+
+  .button:hover::after,
+  .procedure-item__link:hover::after,
+  .floating-whatsapp:hover::after {
+    top: -45%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .button::before,
+  .button::after,
+  .procedure-item__link::before,
+  .procedure-item__link::after,
+  .floating-whatsapp::before,
+  .floating-whatsapp::after {
+    transition: none;
+  }
 }
 
 .hero {
@@ -792,8 +916,6 @@ img {
 
 .procedure-item__link:hover {
   border-color: var(--espresso);
-  background: var(--espresso);
-  color: var(--paper);
 }
 
 .procedure-item__link:active {
@@ -1324,18 +1446,176 @@ img {
   gap: 18px;
 }
 
-.contact-instagram {
+/* Botão Instagram: camadas em "leque" + cartão de perfil (portado do Uiverse, nas cores da marca). */
+.ig-card {
+  position: relative;
+  display: inline-block;
+}
+
+.ig-card__link {
   display: inline-flex;
   min-height: 44px;
   align-items: center;
-  gap: 10px;
+  gap: 40px;
   color: var(--paper);
   text-decoration: none;
 }
 
-.contact-instagram svg {
-  width: 20px;
-  height: 20px;
+.ig-card__layers {
+  position: relative;
+  display: block;
+  width: 48px;
+  height: 48px;
+  transition: transform 0.3s;
+}
+
+.ig-card__layers > span {
+  position: absolute;
+  inset: 0;
+  border: 1px solid var(--honey);
+  border-radius: 14px;
+  transition: transform 0.3s, opacity 0.3s;
+}
+
+.ig-card__glyph {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--honey);
+}
+
+.ig-card__glyph svg {
+  width: 24px;
+  height: 24px;
+}
+
+.ig-card__label {
+  font-weight: 500;
+}
+
+.ig-card__tooltip {
+  position: absolute;
+  bottom: calc(100% + 4px);
+  left: 0;
+  z-index: 5;
+  padding: 8px;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translateY(8px);
+  transition: opacity 0.25s, transform 0.25s, visibility 0.25s;
+}
+
+.ig-card__profile {
+  display: block;
+  min-width: 220px;
+  padding: 12px;
+  border: 1px solid rgba(201, 151, 63, 0.45);
+  border-radius: 10px 16px;
+  background: var(--espresso);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+  color: var(--paper);
+}
+
+.ig-card__user {
+  display: flex;
+  gap: 10px;
+}
+
+.ig-card__avatar {
+  display: flex;
+  width: 44px;
+  height: 44px;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--honey);
+  border-radius: 10px;
+  background: var(--champagne);
+  color: var(--espresso);
+  font-family: var(--font-display, inherit);
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.ig-card__details {
+  display: flex;
+  flex-direction: column;
+}
+
+.ig-card__name {
+  color: var(--honey);
+  font-weight: 700;
+}
+
+.ig-card__handle {
+  font-size: 0.85rem;
+  opacity: 0.85;
+}
+
+.ig-card__about {
+  display: block;
+  padding-top: 8px;
+  color: #ede3d8;
+  font-size: 0.85rem;
+}
+
+/* Efeitos só com ponteiro fino (no toque/navegador do Instagram fica o link simples). */
+@media (hover: hover) and (pointer: fine) {
+  .ig-card:hover .ig-card__tooltip,
+  .ig-card:focus-within .ig-card__tooltip {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+
+  .ig-card__link:hover .ig-card__layers,
+  .ig-card__link:focus-visible .ig-card__layers {
+    transform: rotate(-35deg) skew(20deg);
+  }
+
+  .ig-card__link:hover .ig-card__layers > span:nth-child(1),
+  .ig-card__link:focus-visible .ig-card__layers > span:nth-child(1) {
+    opacity: 0.25;
+  }
+
+  .ig-card__link:hover .ig-card__layers > span:nth-child(2),
+  .ig-card__link:focus-visible .ig-card__layers > span:nth-child(2) {
+    opacity: 0.45;
+    transform: translate(4px, -4px);
+  }
+
+  .ig-card__link:hover .ig-card__layers > span:nth-child(3),
+  .ig-card__link:focus-visible .ig-card__layers > span:nth-child(3) {
+    opacity: 0.65;
+    transform: translate(8px, -8px);
+  }
+
+  .ig-card__link:hover .ig-card__layers > span:nth-child(4),
+  .ig-card__link:focus-visible .ig-card__layers > span:nth-child(4) {
+    opacity: 0.85;
+    transform: translate(12px, -12px);
+  }
+
+  .ig-card__link:hover .ig-card__layers > span:nth-child(5),
+  .ig-card__link:focus-visible .ig-card__layers > span:nth-child(5) {
+    transform: translate(16px, -16px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ig-card__layers,
+  .ig-card__layers > span,
+  .ig-card__tooltip {
+    transition: none;
+  }
+
+  .ig-card__link:hover .ig-card__layers,
+  .ig-card__link:focus-visible .ig-card__layers,
+  .ig-card__link:hover .ig-card__layers > span,
+  .ig-card__link:focus-visible .ig-card__layers > span {
+    transform: none;
+  }
 }
 
 .contact-details {
@@ -1395,11 +1675,6 @@ img {
   text-decoration-thickness: 2px;
 }
 
-.contact-instagram:hover {
-  text-decoration: underline;
-  text-underline-offset: 5px;
-}
-
 .site-footer__bottom {
   align-items: flex-start;
   margin-top: 28px;
@@ -1445,7 +1720,6 @@ img {
 }
 
 .floating-whatsapp:hover {
-  background: #195a3c;
   transform: translateY(-2px);
 }
 
