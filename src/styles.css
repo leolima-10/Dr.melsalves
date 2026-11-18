@@ -234,15 +234,6 @@ img {
   font-style: italic;
 }
 
-.brand--footer .brand-logo__bee {
-  width: 30px;
-  height: 35px;
-}
-
-.brand--footer .brand-logo__name {
-  font-size: 1.6rem;
-}
-
 .primary-nav {
   display: flex;
   align-items: center;
@@ -1668,32 +1659,6 @@ img {
   margin: 0 0 6px;
 }
 
-.site-footer {
-  padding: 30px 0 100px;
-  background: var(--sand);
-}
-
-.site-footer__top,
-.site-footer__bottom {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 24px;
-}
-
-.brand--footer {
-  font-size: 1.5rem;
-}
-
-.footer-registration {
-  max-width: 36ch;
-  margin: 0;
-  color: #574638;
-  font-size: 0.8rem;
-  line-height: 1.5;
-  text-align: center;
-}
-
 .footer-links {
   display: flex;
   gap: 20px;
@@ -1841,27 +1806,6 @@ img {
 .area-item a:hover,
 .text-link:hover {
   text-decoration-thickness: 2px;
-}
-
-.site-footer__bottom {
-  align-items: flex-start;
-  margin-top: 28px;
-  padding-top: 20px;
-  border-top: 1px solid var(--line);
-}
-
-.site-footer__bottom p {
-  max-width: 76ch;
-  margin: 0;
-  color: #574638;
-  font-size: 0.78rem;
-  line-height: 1.6;
-}
-
-.site-footer__bottom > span {
-  flex: none;
-  color: #574638;
-  font-size: 0.8rem;
 }
 
 .floating-whatsapp {
@@ -2199,25 +2143,6 @@ img {
 
   .contact-panel__actions .button {
     width: 100%;
-  }
-
-  .site-footer {
-    padding-bottom: 104px;
-  }
-
-  .site-footer__top,
-  .site-footer__bottom {
-    align-items: flex-start;
-    flex-direction: column;
-    gap: 15px;
-  }
-
-  .footer-registration {
-    text-align: left;
-  }
-
-  .site-footer__bottom {
-    margin-top: 20px;
   }
 
   .floating-whatsapp {
@@ -2714,5 +2639,817 @@ img {
 @media (prefers-reduced-motion: reduce) {
   .area-item::before {
     transition: none;
+  }
+}
+
+/* =====================================================================
+   Rodapé "cartaz rasgado" (TornFooter.jsx)
+   Folha cor de mel (texto espresso, ~6:1) rasgada sobre papel areia; alfinete âmbar.
+   Sem JS / antes da hidratação: tudo visível. `.is-armed` (só com movimento) liga os estados
+   escondidos da animação; `.s1` monta a folha, `.s2` derruba o alfinete, `.s3` imprime o papel.
+   ===================================================================== */
+.tf {
+  --tf-sheet: var(--honey);
+  --tf-paper: #f4eadb;
+  --tf-rim: #fcf8f3;
+  --tf-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background: var(--tf-paper);
+  color: var(--espresso);
+}
+
+.tf :focus-visible {
+  outline: 2px solid var(--espresso);
+  outline-offset: 4px;
+}
+
+.tf-stage {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.tf-paper-fill {
+  fill: var(--tf-paper);
+}
+
+.tf-sheet-fill {
+  fill: var(--tf-sheet);
+}
+
+.tf-rim {
+  fill: var(--tf-rim);
+}
+
+.tf.is-hit .tf-sheet-g {
+  animation: tf-hit 0.32s cubic-bezier(0.3, 0.7, 0.4, 1);
+}
+
+.tf-ico {
+  display: block;
+  width: 1.25em;
+  height: 1.25em;
+  flex: none;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.tf-ico--up {
+  transform: rotate(-90deg);
+}
+
+.tf-ico--squiggle {
+  width: 1.15em;
+  height: 1.15em;
+}
+
+.tf-hex {
+  width: 12px;
+  height: 12px;
+  flex: none;
+  fill: currentColor;
+}
+
+/* ---- folha ---- */
+.tf-sheet-area {
+  position: relative;
+  z-index: 2;
+  padding-top: clamp(28px, 4vw, 44px);
+}
+
+/* Sem o desenho em pixels (sem JS), a folha garante o contraste do conteúdo. */
+.tf:not(.is-live) .tf-sheet-area {
+  background: var(--tf-sheet);
+}
+
+.tf-top {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  gap: 16px;
+}
+
+.tf-social {
+  justify-self: start;
+}
+
+.tf-logo {
+  display: grid;
+  justify-self: center;
+  place-items: center;
+}
+
+.tf-logo .brand-logo__name {
+  display: none;
+}
+
+.tf-logo .brand-logo__bee {
+  width: 44px;
+  height: 51px;
+  stroke: var(--espresso);
+}
+
+.tf-up {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  justify-self: end;
+  gap: 12px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.tf-up__icon {
+  display: grid;
+  width: 40px;
+  height: 40px;
+  flex: none;
+  place-items: center;
+  border: 1.5px solid currentColor;
+  border-radius: 50%;
+  transition: transform 0.35s var(--tf-ease), background-color 0.25s, color 0.25s;
+}
+
+.tf-mid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr) minmax(0, 1fr);
+  align-items: start;
+  gap: clamp(24px, 4vw, 56px);
+  margin-top: clamp(44px, 6vw, 76px);
+}
+
+.tf-col {
+  display: grid;
+  align-content: start;
+  justify-items: start;
+  font-size: 0.95rem;
+}
+
+.tf-col--r {
+  justify-items: end;
+  text-align: right;
+}
+
+.tf-flank {
+  margin-bottom: 22px;
+  font-size: 0.7rem;
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.tf-flank i {
+  font-style: normal;
+  animation: tf-blink 2s steps(1) infinite;
+}
+
+.tf-col__title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 8px;
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  line-height: 1.4;
+  text-transform: uppercase;
+}
+
+.tf-col--r .tf-col__title {
+  flex-direction: row-reverse;
+}
+
+.tf-col ul {
+  display: grid;
+  justify-items: inherit;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.tf-col li {
+  padding: 5px 0;
+  line-height: 1.4;
+}
+
+.tf-col li a {
+  display: inline-block;
+  margin: -5px 0;
+  padding: 5px 0;
+  text-decoration: none;
+  transition: transform 0.35s var(--tf-ease);
+}
+
+.tf-big {
+  margin-top: 16px;
+  font-family: var(--font-display);
+  font-size: clamp(2.2rem, 4.2vw, 3.5rem);
+  font-style: italic;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  line-height: 1;
+  text-decoration: underline;
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 0.14em;
+  transition: text-underline-offset 0.35s var(--tf-ease);
+}
+
+.tf-center {
+  display: grid;
+  justify-items: center;
+  gap: 24px;
+  padding-top: 6px;
+  text-align: center;
+}
+
+.tf-phrase {
+  max-width: 16ch;
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(1.9rem, 3.3vw, 2.9rem);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  line-height: 1.06;
+  text-wrap: balance;
+}
+
+.tf-pill {
+  display: inline-flex;
+  min-height: 58px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 7px 7px 7px 28px;
+  border-radius: 999px;
+  background: var(--paper);
+  box-shadow: 0 12px 28px -16px rgba(42, 29, 20, 0.6);
+  color: var(--espresso);
+  font-size: 1rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: transform 0.35s var(--tf-ease), box-shadow 0.35s var(--tf-ease);
+}
+
+.tf-pill__knob {
+  display: grid;
+  width: 44px;
+  height: 44px;
+  flex: none;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--espresso);
+  color: var(--honey);
+  transition: transform 0.45s cubic-bezier(0.5, 1.7, 0.4, 1);
+}
+
+.tf-pill__knob .tf-ico {
+  width: 22px;
+  height: 22px;
+}
+
+.tf-status {
+  display: inline-flex;
+  max-width: 36ch;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  font-size: 0.86rem;
+  line-height: 1.45;
+  text-align: left;
+}
+
+/* ---- faixa do rasgo e alfinete ---- */
+.tf-band {
+  position: relative;
+  z-index: 3;
+  height: clamp(210px, 24vw, 330px);
+  pointer-events: none;
+}
+
+.tf-pin {
+  position: absolute;
+  bottom: 9%;
+  left: 50%;
+  height: 62%;
+  aspect-ratio: 1 / 2;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 12px;
+  background: none;
+  cursor: pointer;
+  pointer-events: auto;
+  touch-action: manipulation;
+  transform: translateX(-50%);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.tf-pin:focus-visible {
+  outline-offset: 6px;
+}
+
+.tf-pin__tilt {
+  position: absolute;
+  inset: 0;
+  transform: rotate(calc(5deg + var(--tilt, 0deg)));
+  transform-origin: 50% 100%;
+  transition: transform 0.7s var(--tf-ease);
+}
+
+.tf-pin__drop,
+.tf-pin__body {
+  position: absolute;
+  inset: 0;
+  display: block;
+  transform-origin: 50% 100%;
+}
+
+.tf-pin__body {
+  transition: transform 0.32s var(--tf-ease);
+}
+
+.tf-pin__svg {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.tf-pin__shadow {
+  position: absolute;
+  right: 50%;
+  bottom: -0.5%;
+  width: 150%;
+  height: 24%;
+  transform: rotate(16deg);
+  transform-origin: 100% 50%;
+  transition: transform 0.45s var(--tf-ease), opacity 0.45s;
+}
+
+.tf-pin__shadow::before,
+.tf-pin__shadow::after {
+  position: absolute;
+  top: 50%;
+  border-radius: 50%;
+  content: "";
+  transform: translateY(-50%);
+}
+
+.tf-pin__shadow::before {
+  right: 0;
+  width: 100%;
+  height: 24%;
+  background: linear-gradient(90deg, transparent, rgba(42, 29, 20, 0.26) 60%, rgba(42, 29, 20, 0.42));
+  filter: blur(2px);
+}
+
+.tf-pin__shadow::after {
+  left: -6%;
+  width: 60%;
+  height: 100%;
+  background: radial-gradient(closest-side, rgba(42, 29, 20, 0.2), transparent);
+  filter: blur(3px);
+}
+
+.tf-pin[data-pin="lift"] .tf-pin__body {
+  transform: translateY(-22%) rotate(-10deg);
+  transition-duration: 0.3s;
+}
+
+.tf-pin[data-pin="lift"] .tf-pin__shadow {
+  opacity: 0.55;
+  transform: rotate(16deg) translateX(-26%) scale(1.25);
+}
+
+.tf-pin[data-pin="stab"] .tf-pin__body {
+  animation: tf-stab 0.42s cubic-bezier(0.55, 0, 0.8, 0.2) both;
+}
+
+/* ---- papel ---- */
+.tf-paper-area {
+  position: relative;
+  z-index: 2;
+  /* Folga para o botão flutuante do WhatsApp não cobrir a última linha. */
+  padding-bottom: calc(104px + env(safe-area-inset-bottom));
+}
+
+.tf-brand-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  gap: clamp(20px, 4vw, 56px);
+}
+
+.tf-brand {
+  display: grid;
+  justify-items: start;
+}
+
+.tf-eye {
+  margin-left: 0.4em;
+  color: var(--muted);
+  font-size: 0.74rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.tf-word {
+  margin: 0;
+  overflow: hidden;
+  padding: 0 0.04em 0.12em;
+  font-family: var(--font-display);
+  font-size: clamp(4.2rem, 13vw, 11.5rem);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 0.98;
+  white-space: nowrap;
+}
+
+.tf-word em {
+  font-style: italic;
+}
+
+.tf-word > span[aria-hidden] {
+  position: relative;
+  display: block;
+  transition: transform 1s var(--tf-ease) 0.5s;
+}
+
+.tf-word > span[aria-hidden]::after {
+  position: absolute;
+  right: 0.04em;
+  bottom: -0.02em;
+  left: 0.02em;
+  height: max(2px, 0.03em);
+  background: currentColor;
+  content: "";
+  transform-origin: 0 50%;
+  transition: transform 0.9s var(--tf-ease) 1.05s;
+}
+
+.tf-side {
+  display: inline-grid;
+  justify-items: center;
+  gap: 10px;
+  padding: 8px;
+  font-size: 0.9rem;
+  text-align: center;
+  text-decoration: none;
+}
+
+.tf-side--l {
+  justify-self: end;
+}
+
+.tf-side--r {
+  justify-self: start;
+}
+
+.tf-side .tf-ico {
+  width: 1.4em;
+  height: 1.4em;
+  transition: transform 0.35s var(--tf-ease);
+}
+
+.tf-side span {
+  background: linear-gradient(currentColor, currentColor) 0 100% / 0 1px no-repeat;
+  transition: background-size 0.4s var(--tf-ease);
+}
+
+.tf-disclaimer {
+  max-width: 74ch;
+  margin: clamp(28px, 4vw, 44px) auto 0;
+  color: #574638;
+  font-size: 0.78rem;
+  line-height: 1.6;
+  text-align: center;
+}
+
+.tf-foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px 24px;
+  margin-top: 22px;
+  padding-top: 8px;
+  border-top: 1px solid var(--line);
+  color: #574638;
+  font-size: 0.82rem;
+}
+
+.tf-foot a {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  text-underline-offset: 3px;
+}
+
+/* ---- hover (só mouse) ---- */
+@media (hover: hover) and (pointer: fine) {
+  /* Na folha cor de mel, o hover dos botões sociais vira papel (o mel sumiria no fundo). */
+  .tf .social-btn:hover,
+  .tf .social-btn:focus-visible {
+    background: var(--paper);
+  }
+
+  .tf-up:hover .tf-up__icon {
+    background: var(--espresso);
+    color: var(--honey);
+    transform: translateY(-3px);
+  }
+
+  .tf-col--l li a:hover {
+    transform: translateX(4px);
+  }
+
+  .tf-big:hover {
+    text-underline-offset: 0.24em;
+  }
+
+  .tf-pill:hover {
+    box-shadow: 0 16px 32px -16px rgba(42, 29, 20, 0.7);
+    transform: translateY(-2px);
+  }
+
+  .tf-pill:hover .tf-pill__knob {
+    transform: translateX(3px) scale(1.06);
+  }
+
+  .tf-pin:hover .tf-pin__body {
+    transform: translateY(-3%);
+  }
+
+  .tf-pin:hover .tf-pin__shadow {
+    transform: rotate(16deg) translateX(-5%) scaleX(1.06);
+  }
+
+  .tf-side:hover span {
+    background-size: 100% 1px;
+  }
+
+  .tf-side:hover .tf-ico {
+    transform: translateY(-2px) rotate(-8deg);
+  }
+}
+
+/* ---- abertura (só com JS e movimento) ---- */
+.tf-h {
+  transition:
+    opacity 0.7s var(--tf-ease),
+    translate 0.8s var(--tf-ease),
+    filter 0.7s var(--tf-ease);
+  transition-delay: calc(var(--i, 0) * 60ms);
+}
+
+.tf.is-armed:not(.s1) .tf-h {
+  opacity: 0;
+  filter: blur(6px);
+  translate: 0 12px;
+}
+
+.tf-p {
+  transition:
+    opacity 0.8s var(--tf-ease),
+    translate 0.9s var(--tf-ease),
+    filter 0.8s var(--tf-ease);
+  transition-delay: calc(480ms + var(--i, 0) * 70ms);
+}
+
+.tf.is-armed:not(.s3) .tf-p {
+  opacity: 0;
+  filter: blur(8px);
+  transition-delay: 0s;
+  translate: 0 18px;
+}
+
+/* A abelha se desenha traço a traço. */
+.tf.is-armed .tf-logo .brand-logo__bee > :not(mask),
+.tf.is-armed .tf-logo .brand-logo__bee > g > * {
+  stroke-dasharray: 160;
+  stroke-dashoffset: 0;
+  transition: stroke-dashoffset 1.4s var(--tf-ease) 0.15s;
+}
+
+.tf.is-armed:not(.s1) .tf-logo .brand-logo__bee > :not(mask),
+.tf.is-armed:not(.s1) .tf-logo .brand-logo__bee > g > * {
+  stroke-dashoffset: 160;
+}
+
+.tf.is-armed:not(.s3) .tf-word > span[aria-hidden] {
+  transform: translateY(110%);
+  transition-delay: 0s;
+}
+
+.tf.is-armed:not(.s3) .tf-word > span[aria-hidden]::after {
+  transform: scaleX(0);
+  transition-delay: 0s;
+}
+
+.tf.is-armed:not(.s2) .tf-pin {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.tf.is-armed.s2 .tf-pin__drop {
+  animation: tf-drop 0.62s cubic-bezier(0.5, 0, 0.75, 0) both;
+}
+
+.tf.is-armed.s2 .tf-pin__shadow {
+  animation: tf-shade 0.62s cubic-bezier(0.5, 0, 0.75, 0) both;
+}
+
+@keyframes tf-hit {
+  30% {
+    transform: translateY(2px);
+  }
+  60% {
+    transform: translateY(-0.5px);
+  }
+}
+
+@keyframes tf-drop {
+  0% {
+    opacity: 0;
+    transform: translateY(-240%) rotate(-28deg) scale(1.5);
+  }
+  25% {
+    opacity: 1;
+  }
+  80% {
+    transform: translateY(0) rotate(3deg) scale(1);
+  }
+  90% {
+    transform: scale(1.04, 0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes tf-shade {
+  0% {
+    opacity: 0;
+    transform: rotate(16deg) translateX(-60%) scale(2.4);
+  }
+  80%,
+  100% {
+    opacity: 1;
+    transform: rotate(16deg);
+  }
+}
+
+@keyframes tf-stab {
+  0% {
+    transform: translateY(-22%) rotate(-10deg);
+  }
+  70% {
+    transform: translateY(1.5%) rotate(1deg);
+  }
+  100% {
+    transform: none;
+  }
+}
+
+@keyframes tf-blink {
+  50% {
+    opacity: 0.25;
+  }
+}
+
+/* ---- celular ---- */
+@media (max-width: 760px) {
+  .tf-top {
+    grid-template-areas:
+      "logo up"
+      "social social";
+    grid-template-columns: auto auto;
+    justify-content: space-between;
+    row-gap: 20px;
+  }
+
+  .tf-logo {
+    grid-area: logo;
+    justify-self: start;
+  }
+
+  .tf-up {
+    grid-area: up;
+  }
+
+  .tf-social {
+    grid-area: social;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .tf-mid {
+    grid-template-areas:
+      "center center"
+      "l r";
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    row-gap: 44px;
+    margin-top: 36px;
+  }
+
+  .tf-center {
+    grid-area: center;
+  }
+
+  .tf-center > .tf-h:has(.tf-pill) {
+    width: 100%;
+  }
+
+  .tf-pill {
+    width: 100%;
+  }
+
+  .tf-col--l {
+    grid-area: l;
+  }
+
+  .tf-col--r {
+    grid-area: r;
+  }
+
+  .tf-flank {
+    display: none;
+  }
+
+  .tf-big {
+    font-size: 2.1rem;
+  }
+
+  .tf-band {
+    height: clamp(190px, 54vw, 250px);
+  }
+
+  .tf-brand-row {
+    grid-template-areas:
+      "brand brand"
+      "l r";
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    row-gap: 14px;
+  }
+
+  .tf-brand {
+    grid-area: brand;
+    justify-items: center;
+  }
+
+  .tf-word {
+    font-size: 19vw;
+  }
+
+  .tf-side {
+    grid-auto-flow: column;
+    align-items: center;
+    padding: 10px 0;
+    text-align: left;
+  }
+
+  .tf-side--l {
+    grid-area: l;
+    justify-self: start;
+  }
+
+  .tf-side--r {
+    grid-area: r;
+    justify-self: end;
+  }
+
+  .tf-disclaimer {
+    text-align: left;
+  }
+
+  .tf-foot {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tf *,
+  .tf *::before,
+  .tf *::after {
+    animation: none !important;
+    transition-duration: 0.01s !important;
+    transition-delay: 0s !important;
   }
 }
