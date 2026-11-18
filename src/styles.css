@@ -663,7 +663,8 @@ img {
   text-wrap: balance;
 }
 
-.section-heading > p:last-child {
+.section-heading > p:last-child:not(.faq-help),
+.faq-layout .section-heading > .faq-intro {
   max-width: 58ch;
   margin: 18px 0 0;
   color: var(--muted);
@@ -1409,6 +1410,35 @@ img {
   line-height: 1.7;
 }
 
+/* Letras da resposta (divididas em splitFaqAnswer): inline-block para animar blur/opacidade;
+   a palavra não quebra no meio. */
+.faq-word,
+.faq-char {
+  display: inline-block;
+}
+
+.faq-word {
+  white-space: nowrap;
+}
+
+.faq-help {
+  max-width: 34ch;
+  margin: 24px 0 0;
+  color: #554638;
+  line-height: 1.6;
+}
+
+.faq-help--mobile {
+  display: none;
+}
+
+.faq-help__link {
+  color: #684715;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
 .contact-section {
   padding-top: clamp(72px, 9vw, 112px);
   padding-bottom: clamp(72px, 9vw, 112px);
@@ -2031,6 +2061,16 @@ img {
   .about-intro,
   .faq-layout .section-heading {
     position: static;
+  }
+
+  .faq-help--desktop {
+    display: none;
+  }
+
+  .faq-help--mobile {
+    display: block;
+    max-width: none;
+    margin: 0;
   }
 
   .about-copy > p {

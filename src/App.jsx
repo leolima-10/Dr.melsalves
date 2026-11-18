@@ -561,8 +561,35 @@ function CarePath() {
   );
 }
 
+// Divide a resposta em palavras > letras (só no cliente, na primeira abertura, para o HTML
+// pré-renderizado seguir com texto simples). O texto original fica em .sr-only para leitores de tela.
+function splitFaqAnswer(paragraph) {
+  if (paragraph.dataset.split) return;
+  paragraph.dataset.split = 'true';
+  const text = paragraph.textContent;
+  const visual = document.createElement('span');
+  visual.setAttribute('aria-hidden', 'true');
+  text.split(' ').forEach((word, index) => {
+    if (index > 0) visual.append(' ');
+    const wordEl = document.createElement('span');
+    wordEl.className = 'faq-word';
+    Array.from(word).forEach((char) => {
+      const charEl = document.createElement('span');
+      charEl.className = 'faq-char';
+      charEl.textContent = char;
+      wordEl.append(charEl);
+    });
+    visual.append(wordEl);
+  });
+  const readable = document.createElement('span');
+  readable.className = 'sr-only';
+  readable.textContent = text;
+  paragraph.replaceChildren(readable, visual);
+}
+
 // Abre e fecha o <details> animando a altura do corpo (GSAP). Com reduced motion mantém o
 // comportamento nativo (sem preventDefault). O ícone usa data-closing para girar já no início.
+// Ao abrir, as letras da resposta surgem com blur → nítido.
 function toggleFaq(event) {
   if (!window.matchMedia(MOTION_OK).matches) return;
   event.preventDefault();
@@ -591,6 +618,24 @@ function toggleFaq(event) {
       { height: 0, opacity: 0 },
       { height: 'auto', opacity: 1, duration: 0.45, ease: 'power2.out', clearProps: 'height,opacity' },
     );
+    const answer = body.querySelector('p');
+    if (answer) {
+      splitFaqAnswer(answer);
+      const chars = answer.querySelectorAll('.faq-char');
+      gsap.killTweensOf(chars);
+      gsap.fromTo(
+        chars,
+        { opacity: 0, filter: 'blur(10px)' },
+        {
+          opacity: 1,
+          filter: 'blur(0px)',
+          duration: 0.3,
+          ease: 'power1.out',
+          stagger: { amount: 0.6 },
+          clearProps: 'opacity,filter',
+        },
+      );
+    }
   }
 }
 
@@ -601,7 +646,14 @@ function FAQ() {
       <div className="page-width faq-layout">
         <div className="section-heading">
           <h2 id="faq-title">Perguntas frequentes</h2>
-          <p>Informações gerais. A avaliação individual orienta cada decisão.</p>
+          <p className="faq-intro">Informações gerais. A avaliação individual orienta cada decisão.</p>
+          <p className="faq-help faq-help--desktop">
+            Não encontrou o que procura?{' '}
+            <WhatsAppLink context="faq" className="faq-help__link">
+              Fale pelo WhatsApp
+            </WhatsAppLink>
+            .
+          </p>
         </div>
         <div className="faq-list">
           {faqs.map((item) => (
@@ -613,6 +665,13 @@ function FAQ() {
             </details>
           ))}
         </div>
+        <p className="faq-help faq-help--mobile">
+          Não encontrou o que procura?{' '}
+          <WhatsAppLink context="faq" className="faq-help__link">
+            Fale pelo WhatsApp
+          </WhatsAppLink>
+          .
+        </p>
       </div>
     </SectionReveal>
   );
