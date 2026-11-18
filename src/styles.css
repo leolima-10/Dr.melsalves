@@ -577,6 +577,23 @@ img {
   color: var(--paper);
 }
 
+.text-link__arrow {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .text-link__arrow {
+    transition: transform 0.25s ease;
+  }
+
+  .text-link:hover .text-link__arrow,
+  .text-link:focus-visible .text-link__arrow {
+    transform: translateY(3px);
+  }
+}
+
 .hero__credentials {
   display: flex;
   flex-wrap: wrap;
