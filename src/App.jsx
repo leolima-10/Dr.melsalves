@@ -4,6 +4,7 @@ import BeforeAfterSlider, { ComparisonBoard } from './components/BeforeAfterSlid
 import Favo from './components/Favo.jsx';
 import GooeyNav from './components/GooeyNav.jsx';
 import BeeFlight from './components/BeeFlight.jsx';
+import TornFooter from './components/TornFooter.jsx';
 import {
   DESKTOP_MOTION,
   FINE_POINTER,
@@ -15,8 +16,6 @@ import {
 } from './lib/gsap.js';
 import {
   BrandLogo,
-  FooterInstagramButton,
-  FooterWhatsAppButton,
   InstagramCard,
   SectionReveal,
   WhatsAppIcon,
@@ -51,6 +50,9 @@ const navItems = [
   { href: '#faq', label: 'FAQ' },
   { href: '#contato', label: 'Contato' },
 ];
+
+// Coluna "Navegue" do rodapé: Resultados e FAQ já têm destaque próprio no rodapé.
+const footerLinks = navItems.filter((item) => !['#resultados', '#faq'].includes(item.href));
 
 const steps = [
   {
@@ -699,39 +701,13 @@ function Contact() {
   );
 }
 
-function Footer() {
-  return (
-    <footer className="site-footer">
-      <div className="page-width site-footer__top">
-        <a className="brand brand--footer" href="#inicio">
-          <BrandLogo />
-        </a>
-        {SHOW_CREDENTIALS && PROFESSIONAL.registration && (
-          <p className="footer-registration">{PROFESSIONAL.registration}</p>
-        )}
-        <div className="footer-links">
-          <FooterInstagramButton />
-          <FooterWhatsAppButton />
-        </div>
-      </div>
-      <div className="page-width site-footer__bottom">
-        <p>
-          Os resultados variam de pessoa para pessoa. A publicação das imagens depende de
-          autorização dos pacientes. Todo procedimento é realizado mediante avaliação individual.
-        </p>
-        <span>© {new Date().getFullYear()} {DISPLAY_NAME}</span>
-      </div>
-    </footer>
-  );
-}
-
 function FloatingWhatsApp() {
   const [mainCtaVisible, setMainCtaVisible] = useState(false);
 
   useEffect(() => {
     if (!('IntersectionObserver' in window)) return undefined;
     const buttons = document.querySelectorAll(
-      '.hero__actions .button, .results-disclaimer .button, .contact-panel__actions .button',
+      '.hero__actions .button, .results-disclaimer .button, .contact-panel__actions .button, .tf-pill',
     );
     if (!buttons.length) return undefined;
 
@@ -844,7 +820,7 @@ export default function App() {
         <FAQ />
         <Contact />
       </main>
-      <Footer />
+      <TornFooter links={footerLinks} />
       <BeeFlight />
       <FloatingWhatsApp />
     </>
