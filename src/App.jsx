@@ -284,7 +284,19 @@ function Hero() {
             </WhatsAppLink>
             <a className="text-link text-link--light" href="#resultados">
               Ver resultados
-              <span aria-hidden="true">↘</span>
+              <svg
+                viewBox="0 0 24 24"
+                className="text-link__arrow"
+                aria-hidden="true"
+                focusable="false"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M12 5v13M6.5 13 12 18.5 17.5 13" />
+              </svg>
             </a>
           </div>
         </div>
