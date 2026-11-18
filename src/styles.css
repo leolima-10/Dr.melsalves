@@ -276,6 +276,16 @@ img {
   display: none;
 }
 
+/* Desktop: a navegação é o GooeyNav; os links simples só existem no menu mobile. */
+.primary-nav > a.primary-nav__link:not(.button) {
+  display: none;
+}
+
+.primary-nav__gooey {
+  display: flex;
+  align-items: center;
+}
+
 .button {
   display: inline-flex;
   min-height: 52px;
@@ -1872,6 +1882,11 @@ img {
     gap: 14px;
   }
 
+  .primary-nav__gooey .gooey-nav--sm {
+    --gn-font: 12px;
+    --gn-x: 9px;
+  }
+
   .primary-nav > a:not(.button) {
     font-size: 0.84rem;
   }
@@ -1963,6 +1978,11 @@ img {
     flex-direction: column;
   }
 
+  .primary-nav__gooey {
+    display: none;
+  }
+
+  .primary-nav > a.primary-nav__link:not(.button),
   .primary-nav > a:not(.button) {
     display: flex;
     min-height: 48px;
@@ -2215,6 +2235,11 @@ img {
     display: flex;
   }
 
+  .primary-nav__gooey {
+    display: none;
+  }
+
+  .primary-nav > a.primary-nav__link:not(.button),
   .primary-nav > a:not(.button) {
     display: flex;
     min-height: 46px;

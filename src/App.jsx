@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import Lenis from 'lenis';
 import BeforeAfterSlider, { ComparisonBoard } from './components/BeforeAfterSlider.jsx';
 import Favo from './components/Favo.jsx';
+import GooeyNav from './components/GooeyNav.jsx';
 import BeeFlight from './components/BeeFlight.jsx';
 import {
   DESKTOP_MOTION,
@@ -159,7 +160,32 @@ function Header() {
     return () => mm.revert();
   }, []);
 
+  // Scrollspy: a pílula do GooeyNav acompanha a seção que ocupa o meio da tela.
+  const [activeIdx, setActiveIdx] = useState(0);
+
+  useEffect(() => {
+    if (typeof IntersectionObserver === 'undefined') return undefined;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          const index = navItems.findIndex((item) => item.href === `#${entry.target.id}`);
+          if (index >= 0) setActiveIdx(index);
+        });
+      },
+      { rootMargin: '-40% 0px -55% 0px' },
+    );
+    navItems.forEach((item) => {
+      const section = document.getElementById(item.href.slice(1));
+      if (section) observer.observe(section);
+    });
+    return () => observer.disconnect();
+  }, []);
+
   const closeMenu = () => setMenuOpen(false);
+  const gooeyStyle = scrolled
+    ? { '--gn-frame': 'rgba(241, 228, 207, 0.72)', '--gn-ink': '#2a1d14', '--gn-muted': 'rgba(42, 29, 20, 0.7)' }
+    : { '--gn-frame': 'rgba(42, 29, 20, 0.5)' };
 
   return (
     <header
@@ -188,10 +214,23 @@ function Header() {
           aria-label="Navegação principal"
         >
           {navItems.map((item) => (
-            <a key={item.href} href={item.href} onClick={closeMenu}>
+            <a key={item.href} href={item.href} className="primary-nav__link" onClick={closeMenu}>
               {item.label}
             </a>
           ))}
+          <div className="primary-nav__gooey">
+            <GooeyNav
+              items={navItems}
+              activeIndex={activeIdx}
+              onChange={setActiveIdx}
+              theme={scrolled ? 'light' : 'dark'}
+              color="#c9973f"
+              activeTextColor="#2a1d14"
+              colors={['#c9973f', '#e0b866', '#f1e4cf']}
+              size="sm"
+              style={gooeyStyle}
+            />
+          </div>
           <WhatsAppLink context="header" className="button button--small button--gold">
             Agendar avaliação
           </WhatsAppLink>
