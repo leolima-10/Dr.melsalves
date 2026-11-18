@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import Lenis from 'lenis';
 import BeforeAfterSlider, { ComparisonBoard } from './components/BeforeAfterSlider.jsx';
 import Favo from './components/Favo.jsx';
+import GooeyNav from './components/GooeyNav.jsx';
 import BeeFlight from './components/BeeFlight.jsx';
 import {
   DESKTOP_MOTION,
@@ -159,7 +160,32 @@ function Header() {
     return () => mm.revert();
   }, []);
 
+  // Scrollspy: a pílula do GooeyNav acompanha a seção que ocupa o meio da tela.
+  const [activeIdx, setActiveIdx] = useState(0);
+
+  useEffect(() => {
+    if (typeof IntersectionObserver === 'undefined') return undefined;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          const index = navItems.findIndex((item) => item.href === `#${entry.target.id}`);
+          if (index >= 0) setActiveIdx(index);
+        });
+      },
+      { rootMargin: '-40% 0px -55% 0px' },
+    );
+    navItems.forEach((item) => {
+      const section = document.getElementById(item.href.slice(1));
+      if (section) observer.observe(section);
+    });
+    return () => observer.disconnect();
+  }, []);
+
   const closeMenu = () => setMenuOpen(false);
+  const gooeyStyle = scrolled
+    ? { '--gn-frame': 'rgba(241, 228, 207, 0.72)', '--gn-ink': '#2a1d14', '--gn-muted': 'rgba(42, 29, 20, 0.7)' }
+    : { '--gn-frame': 'rgba(42, 29, 20, 0.5)' };
 
   return (
     <header
@@ -188,10 +214,23 @@ function Header() {
           aria-label="Navegação principal"
         >
           {navItems.map((item) => (
-            <a key={item.href} href={item.href} onClick={closeMenu}>
+            <a key={item.href} href={item.href} className="primary-nav__link" onClick={closeMenu}>
               {item.label}
             </a>
           ))}
+          <div className="primary-nav__gooey">
+            <GooeyNav
+              items={navItems}
+              activeIndex={activeIdx}
+              onChange={setActiveIdx}
+              theme={scrolled ? 'light' : 'dark'}
+              color="#c9973f"
+              activeTextColor="#2a1d14"
+              colors={['#c9973f', '#e0b866', '#f1e4cf']}
+              size="sm"
+              style={gooeyStyle}
+            />
+          </div>
           <WhatsAppLink context="header" className="button button--small button--gold">
             Agendar avaliação
           </WhatsAppLink>
@@ -522,8 +561,35 @@ function CarePath() {
   );
 }
 
+// Divide a resposta em palavras > letras (só no cliente, na primeira abertura, para o HTML
+// pré-renderizado seguir com texto simples). O texto original fica em .sr-only para leitores de tela.
+function splitFaqAnswer(paragraph) {
+  if (paragraph.dataset.split) return;
+  paragraph.dataset.split = 'true';
+  const text = paragraph.textContent;
+  const visual = document.createElement('span');
+  visual.setAttribute('aria-hidden', 'true');
+  text.split(' ').forEach((word, index) => {
+    if (index > 0) visual.append(' ');
+    const wordEl = document.createElement('span');
+    wordEl.className = 'faq-word';
+    Array.from(word).forEach((char) => {
+      const charEl = document.createElement('span');
+      charEl.className = 'faq-char';
+      charEl.textContent = char;
+      wordEl.append(charEl);
+    });
+    visual.append(wordEl);
+  });
+  const readable = document.createElement('span');
+  readable.className = 'sr-only';
+  readable.textContent = text;
+  paragraph.replaceChildren(readable, visual);
+}
+
 // Abre e fecha o <details> animando a altura do corpo (GSAP). Com reduced motion mantém o
 // comportamento nativo (sem preventDefault). O ícone usa data-closing para girar já no início.
+// Ao abrir, as letras da resposta surgem com blur → nítido.
 function toggleFaq(event) {
   if (!window.matchMedia(MOTION_OK).matches) return;
   event.preventDefault();
@@ -552,6 +618,24 @@ function toggleFaq(event) {
       { height: 0, opacity: 0 },
       { height: 'auto', opacity: 1, duration: 0.45, ease: 'power2.out', clearProps: 'height,opacity' },
     );
+    const answer = body.querySelector('p');
+    if (answer) {
+      splitFaqAnswer(answer);
+      const chars = answer.querySelectorAll('.faq-char');
+      gsap.killTweensOf(chars);
+      gsap.fromTo(
+        chars,
+        { opacity: 0, filter: 'blur(10px)' },
+        {
+          opacity: 1,
+          filter: 'blur(0px)',
+          duration: 0.3,
+          ease: 'power1.out',
+          stagger: { amount: 0.6 },
+          clearProps: 'opacity,filter',
+        },
+      );
+    }
   }
 }
 
@@ -562,7 +646,14 @@ function FAQ() {
       <div className="page-width faq-layout">
         <div className="section-heading">
           <h2 id="faq-title">Perguntas frequentes</h2>
-          <p>Informações gerais. A avaliação individual orienta cada decisão.</p>
+          <p className="faq-intro">Informações gerais. A avaliação individual orienta cada decisão.</p>
+          <p className="faq-help faq-help--desktop">
+            Não encontrou o que procura?{' '}
+            <WhatsAppLink context="faq" className="faq-help__link">
+              Fale pelo WhatsApp
+            </WhatsAppLink>
+            .
+          </p>
         </div>
         <div className="faq-list">
           {faqs.map((item) => (
@@ -574,6 +665,13 @@ function FAQ() {
             </details>
           ))}
         </div>
+        <p className="faq-help faq-help--mobile">
+          Não encontrou o que procura?{' '}
+          <WhatsAppLink context="faq" className="faq-help__link">
+            Fale pelo WhatsApp
+          </WhatsAppLink>
+          .
+        </p>
       </div>
     </SectionReveal>
   );
